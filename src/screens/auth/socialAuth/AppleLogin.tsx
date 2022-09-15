@@ -1,7 +1,5 @@
 import appleAuth from '@invertase/react-native-apple-authentication';
 import auth from '@react-native-firebase/auth';
-import React from 'react';
-
 export const AppleLogin = async () => {
   const appleAuthRequestResponse = await appleAuth.performRequest({
     requestedOperation: appleAuth.Operation.LOGIN,
@@ -9,11 +7,7 @@ export const AppleLogin = async () => {
   });
   const {identityToken, nonce} = appleAuthRequestResponse;
   if (identityToken) {
-    const credential =  auth.AppleAuthProvider.credential(
-      identityToken,
-      nonce,
-    );
-
+    const credential = auth.AppleAuthProvider.credential(identityToken, nonce);
     await auth().signInWithCredential(credential);
   }
 };

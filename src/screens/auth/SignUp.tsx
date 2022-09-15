@@ -17,15 +17,11 @@ import AppInput from '../../components/AppInput';
 import {Colors} from '../../constants/Colors';
 import {phoneRegex} from '../../utils/regex';
 import Toast from 'react-native-simple-toast';
-import {SignUpInitialValueContext} from '../../contextAPI/UserSignupContext';
-import {v4 as uuidv4} from 'uuid';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
 import {storeData} from '../../storage';
-import {AppleButton} from '@invertase/react-native-apple-authentication';
 import AppleLogin from './socialAuth/AppleLogin';
 import {FacebookLogin} from './socialAuth/FacebookLogin';
 import {GoogleLogin} from './socialAuth/GoogleLogin';
-
 let steps = [
   {
     gender: '',
@@ -38,7 +34,7 @@ let steps = [
     step: 2,
   },
   {
-    birthDate: Date(),
+    birthDate: new Date(),
     isCompleted: false,
     step: 3,
   },
@@ -69,7 +65,6 @@ let steps = [
   },
 ];
 const SignUp = () => {
-  const uid = uuidv4();
   const signupValidationSchema = yup.object().shape({
     phone: yup
       .string()
@@ -111,19 +106,19 @@ const SignUp = () => {
             auth()
               .createUserWithEmailAndPassword(values.email, values.password)
               .then(async res => {
-                firestore().collection('Users').doc(uid).set({
+                firestore().collection('Users').doc(res.user.uid).set({
                   email: values.email,
                   password: values.password,
                   fullName: values.fullName,
                   phone: values.phone,
-                  user_id: uid,
+                  user_id: res.user.uid,
                 });
-                await storeData('uid', uid);
+                await storeData('uid', res.user.uid);
                 await firestore()
                   .collection('SignupSteps')
-                  .doc(uid)
+                  .doc(res.user.uid)
                   .set({
-                    user_id: uid,
+                    user_id: res.user.uid,
                     steps: steps,
                   })
                   .then(res => {
@@ -134,7 +129,7 @@ const SignUp = () => {
                   await auth().signInWithPhoneNumber(`+91${values.phone}`);
                 navigation.navigate('PhoneVerification', {
                   confirm: confirmCode,
-                  collectionId: uid,
+                  collectionId: res.user.uid,
                 });
                 Toast.showWithGravity(
                   'Code sent successfully',
