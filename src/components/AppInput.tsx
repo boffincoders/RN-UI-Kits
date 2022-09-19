@@ -7,8 +7,8 @@ const AppInput = ({
   placeholderTextColor,
   onChangeText,
   value,
-  secureTextEntry
- 
+  secureTextEntry,
+  autoCapitalize
 }: TextInputProps) => {
   return (
     <TextInput
@@ -17,6 +17,7 @@ const AppInput = ({
       onChangeText={onChangeText}
       secureTextEntry={secureTextEntry}
       style={style}
+      autoCapitalize={"none"}
       placeholderTextColor={placeholderTextColor}
     />
   );

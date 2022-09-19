@@ -11,8 +11,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Colors} from '../../constants/Colors';
 import {SignUpInitialValueContext} from '../../contextAPI/UserSignupContext';
 import {IPropsSteps} from './Step1';
-
-let gender = [
+let mainGoals = [
   {
     name: 'Loose weight',
     icon: require('../../assets/images/weight.png'),
@@ -49,7 +48,7 @@ const Step2 = ({onInputChanges}: IPropsSteps) => {
     <View style={styles.container}>
       <View style={styles.listContainer}>
         <Text style={styles.gender}>Choose main goal</Text>
-        {gender.map((x, i) => {
+        {mainGoals.map((x, i) => {
           return (
             <TouchableOpacity key={i} onPress={() => onMainGoal(x.name)}>
               <LinearGradient

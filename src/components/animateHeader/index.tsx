@@ -1,20 +1,15 @@
-import React, {Component, useState} from 'react';
+import React, { useState} from 'react';
 import {
   Animated,
   Dimensions,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-// import str from './content';
-
 const HEADER_EXPANDED_HEIGHT = 300;
 const HEADER_COLLAPSED_HEIGHT = 60;
-
 const {width: SCREEN_WIDTH} = Dimensions.get('screen');
-
 export const AnimatedHeader = () => {
   const [scrollY] = useState(new Animated.Value(0));
 
@@ -92,8 +87,7 @@ export const AnimatedHeader = () => {
       </ScrollView>
     </View>
   );
-};
-
+};  
 const styles = StyleSheet.create({
   container: {
     flex: 1,

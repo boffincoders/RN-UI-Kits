@@ -11,5 +11,4 @@ export const AppleLogin = async () => {
     await auth().signInWithCredential(credential);
   }
 };
-
 export default AppleLogin;

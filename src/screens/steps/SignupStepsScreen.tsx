@@ -29,9 +29,7 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
   const [sendUserStepsData, setSendUserStepsData] =
     useState<ISignUpSteps[]>(steps);
   const [submitStepLoading, setSubmitStepLoading] = useState<boolean>(false);
-  const [isSkipped, setIsSkipped] = useState<boolean>(false);
   const [userSignUpData, setUserSignupData] = useState<ISignUpSteps>();
-
   const [step, setStep] = useState<number>(
     steps.filter(x => !x.isCompleted)?.[0]?.step ?? 1,
   );
@@ -63,26 +61,13 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
         case 8:
           return <Step8 onInputChanges={onInputChanges} />;
         default:
-          // return navigation.navigate('Dashboard');
+        // return navigation.navigate('Dashboard');
       }
   };
 
   useEffect(() => {
     getUserId();
   }, []);
-  useEffect(() => {
-    firestore()
-      .collection('SignupSteps')
-      .get()
-      .then(res => {
-        const fullData = res.docs.map(x => x.data());
-        const user: ISignUpSteps[] = fullData.filter(x => x.user_id === userId);
-        user[0]?.isSkipped && navigation.navigate("Dashboard")
-        setIsSkipped(user[0]?.isSkipped!);
-      });
-  }, [isSkipped]);
-  console.log(isSkipped, 'is');
-
   const onContinue = async () => {
     setSubmitStepLoading(true);
     if (step === 1) {
@@ -167,30 +152,29 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
             steps={steps}
           />
         ) : null}
-        {steps.some(x => !x.isCompleted) ?(
+        {steps.some(x => !x.isCompleted) ? (
           (() => {
             switch (step) {
               case step: {
                 return _.compact(
                   steps.map(_step => {
-                    if (!_step?.isCompleted && !isSkipped) return getScreen(step);
+                    if (!_step?.isCompleted)
+                      return getScreen(step);
                   }),
                 )?.[0];
               }
               default:
-                // return navigation.navigate('Dashboard');
+              // return navigation.navigate('Dashboard');
             }
           })()
         ) : (
-         <Dashboard />
+          <Dashboard />
         )}
+
         {steps.some(x => !x.isCompleted) ? (
-          userSignUpData?.goalWeight?.length &&
-          userSignUpData?.goalWeight?.length > 1 ? null : (
-            <View style={styles.buttonFooter}>
-              <AppButton title="Continue" width={350} onPress={onContinue} />
-            </View>
-          )
+          <View style={styles.buttonFooter}>
+            <AppButton title="Continue" width={350} onPress={onContinue} />
+          </View>
         ) : null}
       </>
     </View>

@@ -61,6 +61,8 @@ const AppRoutes = () => {
     });
     getAllUsers();
   }, [currentUser]);
+  console.log(currentUserSteps,"steps");
+  
   const AppStackNavigator = () => {
     return (
       <Stack.Navigator screenOptions={{headerShown: false}}>

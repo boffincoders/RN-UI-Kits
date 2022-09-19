@@ -88,7 +88,7 @@ const SignIn = () => {
               .signInWithEmailAndPassword(values.email, values.password)
               .then(async res => {
                 const getUser = allUsers.filter(x => x.email === values.email);
-                await storeData('uid', getUser[0]?.user_id);
+                await storeData('uid', res.user.uid);
                 await storeData('currentUser', getUser[0]);
                 if (getUser.length > 0) {
                   const checkingForSignupSteps = firestore()
@@ -105,47 +105,6 @@ const SignIn = () => {
                           navigation.navigate('Dashboard');
                         }
                       });
-
-                      //   if (!value.isCompleted) {
-                      //     navigation.navigate('SignUpSteps');
-                      //   } else {
-                      //     navigation.navigate('Dashboard');
-                      //   }
-                      // });
-                      // navigation.navigate('SignUpSteps');
-
-                      // return steps.map(x => {
-                      //   if (x.isCompleted === false) {
-                      //     switch (x.step) {
-                      //       case 1:
-                      //         navigation.navigate('Step1');
-                      //         break;
-                      //       case 2:
-                      //         navigation.navigate('Step2');
-                      //         break;
-                      //       case 3:
-                      //         navigation.navigate('Step3');
-                      //         break;
-                      //       case 4:
-                      //         navigation.navigate('Step4');
-                      //         break;
-                      //       case 5:
-                      //         navigation.navigate('Step5');
-                      //         break;
-                      //       case 6:
-                      //         navigation.navigate('Step6');
-                      //         break;
-                      //       case 7:
-                      //         navigation.navigate('Step7');
-                      //         break;
-                      //       case 8:
-                      //         navigation.navigate('Step8');
-                      //         break;
-                      //       default:
-                      //         navigation.navigate('CreatePlan');
-                      //     }
-                      //   }
-                      // });
                     }
                   });
                 }
@@ -174,6 +133,7 @@ const SignIn = () => {
                 value={values.email}
                 style={styles.inputContainer}
                 placeholderTextColor={'white'}
+                autoCapitalize="none"
               />
             </View>
             <View
@@ -188,6 +148,8 @@ const SignIn = () => {
                 value={values.password}
                 onChangeText={value => setFieldValue('password', value)}
                 style={styles.inputContainer}
+                autoCapitalize="none"
+
                 secureTextEntry={true}
                 placeholderTextColor={'white'}
               />
@@ -205,9 +167,6 @@ const SignIn = () => {
                     source={require('../../assets/images/apple.png')}
                     style={{height: 37, width: 30}}
                   />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => FacebookLogin()}>
-                  <Image source={require('../../assets/images/fb.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => GoogleLogin()}>
                   <Image source={require('../../assets/images/google.png')} />
@@ -272,7 +231,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     justifyContent: 'space-between',
     marginTop: 15,
-    width: 130,
+    width: 90,
     // paddingHorizontal: 10,
   },
   footer: {

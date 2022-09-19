@@ -9,29 +9,6 @@ const App = () => {
   let options: ReactNativeFirebase.FirebaseAppOptions;
 
   useEffect(() => {
-    // firestore()
-    //   .collection('Activities').doc(uid).set({activities : [
-    //     {
-    //       name: 'Keep fit',
-    //       id: uid,
-    //     },
-    //     {
-    //       name: 'Power training',
-    //       id: uid,
-    //     },
-    //     {
-    //       name: 'Keep fit',
-    //       id: uid,
-    //     },
-    //     {
-    //       name: 'Keep fit',
-    //       id: uid,
-    //     },
-    //     {
-    //       name: 'Yoga',
-    //       id: uid,
-    //     },
-    //   ]})
     if (!firebase.apps.length) {
       firebase.initializeApp(options);
     }

@@ -1,7 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {
   ActivityIndicator,
@@ -20,7 +20,6 @@ import Toast from 'react-native-simple-toast';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
 import {storeData} from '../../storage';
 import AppleLogin from './socialAuth/AppleLogin';
-import {FacebookLogin} from './socialAuth/FacebookLogin';
 import {GoogleLogin} from './socialAuth/GoogleLogin';
 let steps = [
   {
@@ -78,7 +77,7 @@ const SignUp = () => {
       .string()
       .min(6, ({min}) => `Password must be at least ${min} characters`)
       .required('Password is required'),
-    fullName: yup.string().required('Full name is required'),
+    fullName: yup.string().required('Name is required'),
   });
   const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   const [spinner, setSpinner] = useState<boolean>(false);
@@ -104,7 +103,7 @@ const SignUp = () => {
           setSpinner(true);
           try {
             auth()
-              .createUserWithEmailAndPassword(values.email, values.password)
+              .createUserWithEmailAndPassword(values.email,values.password)
               .then(async res => {
                 firestore().collection('Users').doc(res.user.uid).set({
                   email: values.email,
@@ -113,7 +112,7 @@ const SignUp = () => {
                   phone: values.phone,
                   user_id: res.user.uid,
                 });
-                await storeData('uid', res.user.uid);
+                await storeData('uid',res.user.uid);
                 await firestore()
                   .collection('SignupSteps')
                   .doc(res.user.uid)
@@ -186,7 +185,6 @@ const SignUp = () => {
                 placeholderTextColor={'white'}
               />
             </View>
-
             <View
               style={[
                 styles.input,
@@ -202,7 +200,6 @@ const SignUp = () => {
                 placeholderTextColor={'white'}
               />
             </View>
-
             <View
               style={[
                 styles.input,
@@ -248,9 +245,6 @@ const SignUp = () => {
                     source={require('../../assets/images/apple.png')}
                     style={{height: 37, width: 30}}
                   />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => FacebookLogin()}>
-                  <Image source={require('../../assets/images/fb.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => GoogleLogin()}>
                   <Image source={require('../../assets/images/google.png')} />
@@ -315,7 +309,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     justifyContent: 'space-between',
     marginTop: 15,
-    width: 130,
+    width: 90,
     // paddingHorizontal: 10,
   },
   footer: {

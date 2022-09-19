@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
 import {IPropsSteps} from './Step1';
 let selectedColors = ['#332B8A', '#905DE9'];
@@ -23,48 +24,32 @@ const Step8 = ({onInputChanges}: IPropsSteps) => {
   const [selectedActivities, setSelectedActivities] = useState<IActivities[]>(
     [],
   );
+  const [activities, setActivities] = useState<IActivities[]>([
+  ]);
+
+  useEffect(() => {
+    firestore()
+      .collection('Activities')
+      .get()
+      .then(res => {
+        const fullData = res.docs.map(x => x.data());
+        const newData = fullData[0].activities.map((x: any) => {
+          return {
+            ...x,
+            icon: require('../../assets/images/yoga.png'),
+            isSelected: false,
+            color: defaultColors,
+          };
+
+        });
+        setActivities(newData)
+      });
+  }, []);
   useEffect(() => {
     if (selectedActivities.length > 0) {
       onInputChanges({InterestedActivities: selectedActivities});
     }
   }, [selectedActivities]);
-  const [activities, setActivities] = useState<IActivities[]>([
-    {
-      name: 'Keep fit',
-      icon: require('../../assets/images/run.png'),
-      isSelected: false,
-      id: '1',
-      color: defaultColors,
-    },
-    {
-      name: 'Power training',
-      icon: require('../../assets/images/lifter.png'),
-      isSelected: false,
-      id: '2',
-      color: defaultColors,
-    },
-    {
-      name: 'Keep fit',
-      icon: require('../../assets/images/exe.png'),
-      isSelected: false,
-      id: '3',
-      color: defaultColors,
-    },
-    {
-      name: 'Keep fit',
-      icon: require('../../assets/images/girl.png'),
-      isSelected: false,
-      id: '4',
-      color: defaultColors,
-    },
-    {
-      name: 'Yoga',
-      icon: require('../../assets/images/yoga.png'),
-      isSelected: false,
-      id: '5',
-      color: defaultColors,
-    },
-  ]);
 
   const selectItem = (data: any) => {
     data.isSelected = !data.isSelected;
