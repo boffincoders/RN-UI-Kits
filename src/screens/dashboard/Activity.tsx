@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {LineChart} from 'react-native-chart-kit'
+import {LineChart} from 'react-native-chart-kit';
 import {Colors} from '../../constants/Colors';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import FitChart from '../../components/charts/fitChart';
@@ -74,6 +74,8 @@ const Activity = () => {
           horizontal
           pagingEnabled={false}>
           {allDates.map((x, i) => {
+            const currentDate = moment(new Date()).format('DD-MMM').split('-');
+
             return (
               <TouchableOpacity onPress={() => setSelectedDate(i)} key={i}>
                 <LinearGradient
@@ -237,11 +239,11 @@ const Activity = () => {
                   {/* <View style={{height : "20%" , width : "20%"}}> */}
 
                   <FitChart
-          title={"Sleep"}
-          description={"7h 48m • Yesterday"}
-          data={line}
-          baseline={8}
-        />
+                    title={'Sleep'}
+                    description={'7h 48m • Yesterday'}
+                    data={line}
+                    baseline={8}
+                  />
                   {/* </View> */}
                   <View
                     style={{
@@ -304,28 +306,27 @@ const Activity = () => {
                       </View>
                     )}
                   </AnimatedCircularProgress> */}
-              <LineChart
-    data={line}
-    width={Dimensions.get('window').width} // from react-native
-    height={220}
-    yAxisLabel={'$'}
-    
-    chartConfig={{
-      // backgroundColor: '#e26a00',
-      // backgroundGradientFrom: '#fb8c00',
-      // backgroundGradientTo: '#ffa726',
-      decimalPlaces: 2, // optional, defaults to 2dp
-      color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-      style: {
-        // borderRadius: 16
-      }
-    }}
-    bezier
-    style={{
-      marginVertical: 8,
-      // borderRadius: 16
-    }}
-  />
+                  <LineChart
+                    data={line}
+                    width={Dimensions.get('window').width} // from react-native
+                    height={220}
+                    yAxisLabel={'$'}
+                    chartConfig={{
+                      // backgroundColor: '#e26a00',
+                      // backgroundGradientFrom: '#fb8c00',
+                      // backgroundGradientTo: '#ffa726',
+                      decimalPlaces: 2, // optional, defaults to 2dp
+                      color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                      style: {
+                        // borderRadius: 16
+                      },
+                    }}
+                    bezier
+                    style={{
+                      marginVertical: 8,
+                      // borderRadius: 16
+                    }}
+                  />
                 </LinearGradient>
               </Row>
               <Row style={{height: '43%', marginTop: 10}}>

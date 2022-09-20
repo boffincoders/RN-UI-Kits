@@ -1,38 +1,45 @@
-
 import React, {useContext, useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
 import {SignUpInitialValueContext} from '../../contextAPI/UserSignupContext';
 import {IPropsSteps} from './Step1';
-let mainGoals = [
-  {
-    name: 'Loose weight',
-    icon: require('../../assets/images/weight.png'),
-  },
-  {
-    name: 'Keep fit',
-    icon: require('../../assets/images/leaf.png'),
-  },
-  {
-    name: 'Get Stronger',
-    icon: require('../../assets/images/muscle.png'),
-  },
-  {
-    name: 'Gain muscle mass',
-    icon: require('../../assets/images/dumbell.png'),
-  },
-];
+import Spinner from 'react-native-loading-spinner-overlay/lib';
+interface IMainGoals {
+  name: string;
+  id: string;
+  image: string;
+}
 const Step2 = ({onInputChanges}: IPropsSteps) => {
-  const [selectedList, setSelectedList] = useState<string>('Loose weight');
+  const [mainGoals, setMainGoals] = useState<IMainGoals[]>([]);
+  const [listLoader, setListLoader] = useState<boolean>(false);
+  const getMainGoals = async () => {
+    setListLoader(true);
+    firestore()
+      .collection('MainGoals')
+      .get()
+      .then(response => {
+        const data = response.docs.map(x => x.data());
+        setMainGoals(data as IMainGoals[]);
+      })
+      .catch(err => console.log(err));
+    setListLoader(false);
+  };
+  const [selectedList, setSelectedList] = useState<string>(
+    mainGoals[0]?.name.toString(),
+  );
   const {setSignUpdata, signUpdata} = useContext(SignUpInitialValueContext);
   useEffect(() => {
+    getMainGoals();
     setSignUpdata({...signUpdata, mainGoal: selectedList});
   }, []);
   const onMainGoal = (name: string) => {
@@ -46,21 +53,19 @@ const Step2 = ({onInputChanges}: IPropsSteps) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.listContainer}>
-        <Text style={styles.gender}>Choose main goal</Text>
-        {mainGoals.map((x, i) => {
-          return (
-            <TouchableOpacity key={i} onPress={() => onMainGoal(x.name)}>
-              <LinearGradient
-                start={{x: 1, y: 1}}
-                end={{x: 1, y: 0}}
-                colors={
-                  selectedList === x.name
-                    ? ['#332B8A', '#905DE9']
-                    : ['#2D3450', '#2D3450']
-                }
-                style={styles.listItem}>
-                <View style={styles.textAndIconWrapper}>
+      <ScrollView>
+        <View style={styles.listContainer}>
+          <Spinner
+            visible={listLoader}
+            textStyle={{color: Colors.WHITE}}
+            textContent={'Loading...'}
+            customIndicator={<ActivityIndicator color={'#9662F1'} />}
+          />
+          <Text style={styles.gender}>Choose main goal</Text>
+          {!listLoader &&
+            mainGoals.map((x, i) => {
+              return (
+                <TouchableOpacity key={i} onPress={() => onMainGoal(x.name)}>
                   <LinearGradient
                     start={{x: 1, y: 1}}
                     end={{x: 1, y: 0}}
@@ -69,19 +74,39 @@ const Step2 = ({onInputChanges}: IPropsSteps) => {
                         ? ['#332B8A', '#905DE9']
                         : ['#2D3450', '#2D3450']
                     }
-                    style={styles.iconContainer}>
-                    <Image source={x.icon} />
+                    style={styles.listItem}>
+                    <View style={styles.textAndIconWrapper}>
+                      <LinearGradient
+                        start={{x: 1, y: 1}}
+                        end={{x: 1, y: 0}}
+                        colors={
+                          selectedList === x.name
+                            ? ['#332B8A', '#905DE9']
+                            : ['#2D3450', '#2D3450']
+                        }
+                        style={styles.iconContainer}>
+                        <Image
+                          style={{width: 30, height: 30}}
+                          source={{
+                            uri: x.image,
+                          }}
+                        />
+                      </LinearGradient>
+                      <Text
+                        style={{
+                          color: Colors.WHITE,
+                          marginLeft: 5,
+                          fontSize: 16,
+                        }}>
+                        {x.name}
+                      </Text>
+                    </View>
                   </LinearGradient>
-                  <Text
-                    style={{color: Colors.WHITE, marginLeft: 5, fontSize: 16}}>
-                    {x.name}
-                  </Text>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+                </TouchableOpacity>
+              );
+            })}
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -142,4 +167,3 @@ const styles = StyleSheet.create({
 });
 
 export default Step2;
-

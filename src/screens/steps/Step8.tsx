@@ -15,7 +15,7 @@ let selectedColors = ['#332B8A', '#905DE9'];
 let defaultColors = ['#2D3450', '#2D3450'];
 interface IActivities {
   name: string;
-  icon?: any;
+  image?: any;
   isSelected?: boolean;
   id: string;
   color?: any;
@@ -24,25 +24,17 @@ const Step8 = ({onInputChanges}: IPropsSteps) => {
   const [selectedActivities, setSelectedActivities] = useState<IActivities[]>(
     [],
   );
-  const [activities, setActivities] = useState<IActivities[]>([
-  ]);
+  const [activities, setActivities] = useState<IActivities[]>([]);
 
   useEffect(() => {
     firestore()
       .collection('Activities')
       .get()
       .then(res => {
-        const fullData = res.docs.map(x => x.data());
-        const newData = fullData[0].activities.map((x: any) => {
-          return {
-            ...x,
-            icon: require('../../assets/images/yoga.png'),
-            isSelected: false,
-            color: defaultColors,
-          };
-
+        const fullData = res.docs.map(x => {
+          return {...x.data(), isSelected: false, color: defaultColors};
         });
-        setActivities(newData)
+        setActivities(fullData as IActivities[]);
       });
   }, []);
   useEffect(() => {
@@ -50,6 +42,7 @@ const Step8 = ({onInputChanges}: IPropsSteps) => {
       onInputChanges({InterestedActivities: selectedActivities});
     }
   }, [selectedActivities]);
+  console.log(activities, 'sacdsdee');
 
   const selectItem = (data: any) => {
     data.isSelected = !data.isSelected;
@@ -90,7 +83,10 @@ const Step8 = ({onInputChanges}: IPropsSteps) => {
                         end={{x: 1, y: 0}}
                         colors={item.color}
                         style={styles.iconContainer}>
-                        <Image source={item.icon} />
+                        <Image
+                          style={{width: 30, height: 30}}
+                          source={{uri: item.image}}
+                        />
                       </LinearGradient>
                       <Text
                         style={{

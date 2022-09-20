@@ -1,8 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Animated,
-  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
@@ -11,12 +10,6 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {
-  SafeAreaProvider,
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-import {AnimatedHeader} from '../../components/animateHeader';
 import AppButton from '../../components/AppButton';
 import {Colors} from '../../constants/Colors';
 const DATA = [
@@ -104,11 +97,8 @@ const workout = [
 ];
 const HEADER_EXPANDED_HEIGHT = 300;
 const HEADER_COLLAPSED_HEIGHT = 60;
-
-const {width: SCREEN_WIDTH} = Dimensions.get('screen');
 const WorkoutDetails = () => {
   const [scrollY] = useState(new Animated.Value(0));
-
   const headerHeight = scrollY.interpolate({
     inputRange: [0, HEADER_EXPANDED_HEIGHT - HEADER_COLLAPSED_HEIGHT],
     outputRange: [HEADER_EXPANDED_HEIGHT, HEADER_COLLAPSED_HEIGHT],
@@ -131,31 +121,8 @@ const WorkoutDetails = () => {
   return (
     <>
       <View style={styles.container}>
-        <Animated.View style={[styles.header, {height: headerHeight}]}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: 10,
-            }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Image
-                source={require('../../assets/images/backButton.png')}
-                style={{tintColor: Colors.BLACK}}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Image source={require('../../assets/images/heartOutline.png')} />
-            </TouchableOpacity>
-          </View>
-          {!scrollY ? null : (
-            <View style={{alignSelf: 'center'}}>
-              <Image source={require('../../assets/images/Vector.png')} />
-            </View>
-          )}
-        </Animated.View>
         <ScrollView
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContainer}
           onScroll={Animated.event([
             {
@@ -167,6 +134,34 @@ const WorkoutDetails = () => {
             },
           ])}
           scrollEventThrottle={16}>
+          <Animated.View style={[styles.header]}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                // padding: 10,
+              }}>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Image
+                  source={require('../../assets/images/backButton.png')}
+                  style={{tintColor: Colors.WHITE}}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Image
+                  source={require('../../assets/images/heartOutline.png')}
+                  style={{tintColor: Colors.WHITE}}
+                />
+              </TouchableOpacity>
+            </View>
+            {!scrollY ? null : (
+              <View style={{alignSelf: 'center'}}>
+                <Image source={require('../../assets/images/Vector.png')} />
+              </View>
+            )}
+          </Animated.View>
+
           <View style={styles.card}>
             <Text style={styles.workoutName}>Upper Body Workout</Text>
             <Text style={styles.des}>
@@ -322,7 +317,6 @@ const WorkoutDetails = () => {
               <Text style={styles.items}>2 Minutes</Text>
             </View>
           </View>
-
           <View>
             {workout.map((x, i) => {
               return (
@@ -357,239 +351,11 @@ const WorkoutDetails = () => {
             </View>
           </View>
         </ScrollView>
-        <View style={{padding: 10}}>
+        <View style={{paddingHorizontal: 10, paddingVertical: 5}}>
           <AppButton title="Start Workout" />
         </View>
       </View>
     </>
-
-    // <View style={styles.container}>
-    //   {scrollY && scrollY > 0 ? null : (
-    //     <Animated.View style={styles.header}>
-    //       <View
-    //         style={{
-    //           flexDirection: 'row',
-    //           alignItems: 'center',
-    //           justifyContent: 'space-between',
-    //           padding: 10,
-    //         }}>
-    //         <TouchableOpacity onPress={() => navigation.goBack()}>
-    //           <Image
-    //             source={require('../../assets/images/backButton.png')}
-    //             style={{tintColor: Colors.BLACK}}
-    //           />
-    //         </TouchableOpacity>
-    //         <TouchableOpacity>
-    //           <Image source={require('../../assets/images/heartOutline.png')} />
-    //         </TouchableOpacity>
-    //       </View>
-    //       <View style={{alignSelf: 'center'}}>
-    //         <Image source={require('../../assets/images/Vector.png')} />
-    //       </View>
-    //     </Animated.View>
-    //   )}
-
-    //     <ScrollView
-    //       stickyHeaderIndices={[1]}
-    //       onScroll={event => {
-    //         setScrollY(event.nativeEvent.contentOffset.y);
-    //       }}
-    //       stickyHeaderHiddenOnScroll>
-    //       <View style={styles.card}>
-    //         <Text style={styles.workoutName}>Upper Body Workout</Text>
-    //         <Text style={styles.des}>
-    //           Resistance training, also known as strength
-    //         </Text>
-    //         <Text style={styles.des}>
-    //           training, is an essential component of any
-    //         </Text>
-    //         <Text style={styles.des}>
-    //           fitness routine, especially for your upper body
-    //         </Text>
-
-    //         <View style={styles.profileItemsContainer}>
-    //           <LinearGradient
-    //             start={{x: 1, y: 1}}
-    //             end={{x: 1, y: 0}}
-    //             colors={['#332B8A', '#905DE9']}
-    //             style={styles.profileItems}>
-    //             <Image source={require('../../assets/images/time.png')} />
-    //             <Text style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
-    //               30 min
-    //             </Text>
-    //           </LinearGradient>
-    //           <LinearGradient
-    //             start={{x: 1, y: 1}}
-    //             end={{x: 1, y: 0}}
-    //             colors={['#332B8A', '#905DE9']}
-    //             style={styles.profileItems}>
-    //             <Image source={require('../../assets/images/fire.png')} />
-    //             <Text style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
-    //               340 kal
-    //             </Text>
-    //           </LinearGradient>
-
-    //           <LinearGradient
-    //             start={{x: 1, y: 1}}
-    //             end={{x: 1, y: 0}}
-    //             colors={['#332B8A', '#905DE9']}
-    //             style={styles.profileItems}>
-    //             <Image source={require('../../assets/images/cake.png')} />
-    //             <Text style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
-    //               26 Years
-    //             </Text>
-    //           </LinearGradient>
-    //         </View>
-    //         <View style={styles.rowContainer}>
-    //           <Text style={styles.equip}>Equipment</Text>
-    //           <Text style={styles.items}>2 Items</Text>
-    //         </View>
-
-    //         <View style={{flexDirection: 'row', padding: 10}}>
-    //           <View>
-    //             <View style={styles.borderBoxes}>
-    //               <Image
-    //                 style={{height: 50, width: 70}}
-    //                 source={require('../../assets/images/Vector.png')}
-    //               />
-    //             </View>
-    //             <Text
-    //               style={{color: Colors.WHITE, fontSize: 16, marginLeft: 3}}>
-    //               2 dumbles
-    //             </Text>
-    //           </View>
-    //           <View>
-    //             <View style={styles.borderBoxes}>
-    //               <Image
-    //                 style={{height: 50, width: 70}}
-    //                 source={require('../../assets/images/Vector.png')}
-    //               />
-    //             </View>
-    //             <Text
-    //               style={{color: Colors.WHITE, fontSize: 16, marginLeft: 3}}>
-    //               Mat
-    //             </Text>
-    //           </View>
-    //         </View>
-    //       </View>
-    //       <View style={styles.account}>
-    //         <View>
-    //           <View style={styles.listItem}>
-    //             <Text style={styles.listTitle}>Schedule workout</Text>
-    //             <TouchableOpacity>
-    //               <Image source={require('../../assets/images/forward.png')} />
-    //             </TouchableOpacity>
-    //           </View>
-    //           <View style={styles.borderListBottom}></View>
-    //         </View>
-    //         <View>
-    //           <View style={styles.listItem}>
-    //             <View style={{flexDirection: 'row'}}>
-    //               <Text style={styles.listTitle}>Pick a playlist</Text>
-    //             </View>
-    //             <TouchableOpacity>
-    //               <Image source={require('../../assets/images/forward.png')} />
-    //             </TouchableOpacity>
-    //           </View>
-    //         </View>
-    //       </View>
-    //       <Text
-    //         style={{
-    //           paddingHorizontal: 10,
-    //           paddingVertical: 10,
-    //           fontSize: 20,
-    //           color: Colors.WHITE,
-    //         }}>
-    //         Exercises
-    //       </Text>
-    //       <View style={styles.rowContainer}>
-    //         <Text style={[styles.equip, {fontSize: 16}]}>Warm-up</Text>
-    //         <View style={{flexDirection: 'row'}}>
-    //           <Text style={styles.items}>3 Exercises</Text>
-    //           <Text style={styles.items}>.</Text>
-    //           <Text style={styles.items}>2 Minutes</Text>
-    //         </View>
-    //       </View>
-    //       <View>
-    //         {exercises.map((x, i) => {
-    //           return (
-    //             <View key={i} style={styles.list}>
-    //               <View style={{flexDirection: 'row'}}>
-    //                 <View style={styles.imageContainer}>
-    //                   <Image
-    //                     source={require('../../assets/images/Vector.png')}
-    //                     style={{height: 30, width: 40}}
-    //                   />
-    //                 </View>
-    //                 <View style={{marginLeft: 5}}>
-    //                   <Text style={{color: Colors.WHITE}}>{x.name}</Text>
-    //                   <Text style={{color: Colors.WHITE}}>0:30</Text>
-    //                 </View>
-    //               </View>
-    //               <Image source={require('../../assets/images/warning.png')} />
-    //             </View>
-    //           );
-    //         })}
-    //         <View style={styles.list}>
-    //           <View style={{flexDirection: 'row', paddingHorizontal: 15}}>
-    //             <View style={styles.restCircle}>
-    //               <Text style={{color: '#9662F1', fontSize: 10}}>00:30</Text>
-    //             </View>
-    //             <View style={{marginLeft: 11}}>
-    //               <Text style={{color: Colors.WHITE}}>Rest</Text>
-    //               <Text style={{color: Colors.WHITE}}>0:30</Text>
-    //             </View>
-    //           </View>
-    //         </View>
-    //       </View>
-    //       <View style={styles.rowContainer}>
-    //         <Text style={[styles.equip, {fontSize: 16}]}>Workout</Text>
-    //         <View style={{flexDirection: 'row'}}>
-    //           <Text style={styles.items}>3 Exercises</Text>
-    //           <Text style={styles.items}>.</Text>
-    //           <Text style={styles.items}>2 Minutes</Text>
-    //         </View>
-    //       </View>
-
-    //       <View>
-    //         {workout.map((x, i) => {
-    //           return (
-    //             <View key={i} style={styles.list}>
-    //               <View style={{flexDirection: 'row'}}>
-    //                 <View style={styles.imageContainer}>
-    //                   <Image
-    //                     source={require('../../assets/images/Vector.png')}
-    //                     style={{height: 30, width: 40}}
-    //                   />
-    //                 </View>
-    //                 <View style={{marginLeft: 5}}>
-    //                   <Text style={{color: Colors.WHITE}}>{x.name}</Text>
-    //                   <Text style={{color: Colors.WHITE}}>x</Text>
-    //                   <Text style={{color: Colors.WHITE}}>0:30</Text>
-    //                 </View>
-    //               </View>
-    //               <Image source={require('../../assets/images/warning.png')} />
-    //             </View>
-    //           );
-    //         })}
-    //         <View style={styles.list}>
-    //           <View style={{flexDirection: 'row', paddingHorizontal: 15}}>
-    //             <View style={styles.restCircle}>
-    //               <Text style={{color: '#9662F1', fontSize: 10}}>00:30</Text>
-    //             </View>
-    //             <View style={{marginLeft: 11}}>
-    //               <Text style={{color: Colors.WHITE}}>Rest</Text>
-    //               <Text style={{color: Colors.WHITE}}>0:30</Text>
-    //             </View>
-    //           </View>
-    //         </View>
-    //       </View>
-    //     </ScrollView>
-
-    //   <View style={{padding: 10}}>
-    //     <AppButton title="Start Workout" />
-    //   </View>
-    // </View>
   );
 };
 const styles = StyleSheet.create({
@@ -598,20 +364,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#222332',
   },
   header: {
-    backgroundColor: 'white',
-    position: 'absolute',
-    width: SCREEN_WIDTH,
+    backgroundColor: '#222332',
+    height: 200,
+    // width : "100%",
+    // flex : 1,
     zIndex: 999999,
   },
   card: {
     backgroundColor: '#2D3450',
-    width: '100%',
+    // width: '100%',
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 20,
     zIndex: 9999,
-    // marginTop: -20,
-    // zIndex: 9999,
+    // marginBottom : 50
   },
   workoutName: {
     fontSize: 27,
