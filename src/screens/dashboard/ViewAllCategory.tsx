@@ -1,7 +1,9 @@
 import * as React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {
+  ActivityIndicator,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,112 +12,130 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
-
-const categories = [
-  {
-    title: 'Personal Trainings',
-    icon: require('../../assets/images/book.png'),
-  },
-  {
-    title: 'Yoga',
-    icon: require('../../assets/images/yoga.png'),
-  },
-  {
-    title: 'Strech',
-    icon: require('../../assets/images/exe.png'),
-  },
-  {
-    title: 'Boxing',
-    icon: require('../../assets/images/boxing.png'),
-  },
-  {
-    title: 'Running',
-    icon: require('../../assets/images/run.png'),
-  },
-  {
-    title: 'Upper Body',
-    icon: require('../../assets/images/muscle.png'),
-  },
-  {
-    title: 'Gym',
-    icon: require('../../assets/images/lifter.png'),
-  },
-  {
-    title: 'Gym',
-    icon: require('../../assets/images/lifter.png'),
-  },
-];
+import {IExercises} from './Home';
+import Spinner from 'react-native-loading-spinner-overlay/lib';
 const ViewAllCategory = () => {
+  const [loader, setLoader] = React.useState<boolean>(false);
+  const [categories, setCategories] = React.useState<IExercises[]>([]);
+  const [refreshing, setRefreshing] = React.useState<boolean>(false);
+  const getCategories = async (refresh?: boolean) => {
+    if (refresh) setRefreshing(refresh);
+    setLoader(refresh ? false : true);
+    await firestore()
+      .collection('Categories')
+      .get()
+      .then(res => {
+        const data = res.docs.map(x => x.data());
+        setCategories(data as IExercises[]);
+      })
+      .catch(err => {
+        console.log(err, 'on exercises fetch error');
+      });
+    setRefreshing(false);
+    setLoader(false);
+  };
+
+  React.useEffect(() => {
+    getCategories();
+  }, []);
   const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image source={require('../../assets/images/backButton.png')} />
-        </TouchableOpacity>
-
-        <View>
-          <Text style={{color: Colors.WHITE}}>Category</Text>
-        </View>
-        <View></View>
-      </View>
-      <View style={styles.searchSection}>
-        <Image
-          style={styles.searchIcon}
-          source={require('../../assets/images/search.png')}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Search something"
-          autoFocus={false}
-          placeholderTextColor={Colors.WHITE}
-          onChangeText={searchString => console.log(searchString)}
-        />
-      </View>
-      <View style={{flex: 1}}>
-        <ScrollView>
-          {categories.map((x, index) => {
-            return (
-              <TouchableOpacity
-                key={index}
-                style={styles.list}
-                onPress={() => navigation.navigate('WorkoutDetails')}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <LinearGradient
-                      start={{x: 1, y: 1}}
-                      end={{x: 1, y: 0}}
-                      colors={['#332B8A', '#905DE9']}
-                      style={styles.iconContainer}>
-                      <Image style={{height: 30, width: 25}} source={x.icon} />
-                    </LinearGradient>
-                    <View style={{marginLeft: 10}}>
-                      <Text style={styles.titleText}>{x.title}</Text>
-                      <Text style={styles.secondaryText}>2 workouts</Text>
+      <Spinner
+        visible={loader}
+        textStyle={{color: Colors.WHITE}}
+        textContent={'Loading...'}
+        overlayColor={'#222332'}
+        customIndicator={<ActivityIndicator color={'#9662F1'} />}
+      />
+      {!loader && (
+        <>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image source={require('../../assets/images/backButton.png')} />
+            </TouchableOpacity>
+            <View>
+              <Text style={{color: Colors.WHITE}}>Category</Text>
+            </View>
+            <View></View>
+          </View>
+          <View style={styles.searchSection}>
+            <Image
+              style={styles.searchIcon}
+              source={require('../../assets/images/search.png')}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Search something"
+              autoFocus={false}
+              placeholderTextColor={Colors.WHITE}
+            />
+          </View>
+          <View style={{flex: 1}}>
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  tintColor={Colors.WHITE}
+                  refreshing={refreshing}
+                  onRefresh={() => getCategories(true)}
+                />
+              }
+              showsVerticalScrollIndicator={false}>
+              {categories.map((x, index) => {
+                console.log(x,"dsds");
+                
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.list}
+                    onPress={() =>
+                      navigation.navigate('CategoriesExercises', {
+                        categoryId: x.id,
+                      })
+                    }>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
+                        <LinearGradient
+                          start={{x: 1, y: 1}}
+                          end={{x: 1, y: 0}}
+                          colors={['#332B8A', '#905DE9']}
+                          style={styles.iconContainer}>
+                          <Image
+                            resizeMode="contain"
+                            style={{height: 30, width: 25}}
+                            source={{uri: x.image}}
+                          />
+                        </LinearGradient>
+                        <View style={{marginLeft: 10}}>
+                          <Text style={styles.titleText}>{x.name}</Text>
+                          <Text style={styles.secondaryText}>2 workouts</Text>
+                        </View>
+                      </View>
+                      <View>
+                        <Image
+                          source={require('../../assets/images/forward.png')}
+                        />
+                      </View>
                     </View>
-                  </View>
-                  <View>
-                    <Image
-                      source={require('../../assets/images/forward.png')}
-                    />
-                  </View>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+        </>
+      )}
     </View>
   );
 };

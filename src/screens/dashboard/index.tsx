@@ -9,8 +9,10 @@ import {getStoredData} from '../../storage';
 import AccountInformation from './AccountInformation';
 import Activity from './Activity';
 import BottomTabBar from './bottomTabBar';
+import CategoriesExercises from './categoriesExercises';
 import Home from './Home';
 import Profile from './Profile';
+import StartWorkout from './StartWorkout';
 import Trainings from './Trainings';
 import ViewAllCategory from './ViewAllCategory';
 import ViewAllExercise from './ViewAllExercise';
@@ -61,7 +63,9 @@ const Dashboard = () => {
       <Tab.Screen name="ViewAllExercise" component={ViewAllExercise} />
       <Tab.Screen name="AccountInformation" component={AccountInformation} />
       <Tab.Screen name="WorkoutDetails" component={WorkoutDetails} />
+      <Tab.Screen name="StartWorkout" component={StartWorkout} />
       <Tab.Screen name="Activity" component={Activity} />
+      <Tab.Screen name="CategoriesExercises" component={CategoriesExercises} />
       <Tab.Screen name="Profile">
         {props => <Profile {...props} currentUser={currentUser as IUserType} />}
       </Tab.Screen>

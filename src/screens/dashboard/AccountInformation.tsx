@@ -1,8 +1,21 @@
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, TouchableOpacity, View, Image, Text} from 'react-native';
 import {Colors} from '../../constants/Colors';
+import {getStoredData} from '../../storage';
+import {ISignUpSteps} from '../auth/SignIn';
 const AccountInformation = () => {
+  const [steps, setSteps] = useState<ISignUpSteps[]>([]);
+  const getSteps = async () => {
+    const data = await getStoredData('steps');
+    setSteps(JSON.parse(data));
+  };
+  useEffect(() => {
+    getSteps();
+  }, [steps]);
+
+  console.log(steps, 'steps');
+
   const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   return (
     <View style={styles.container}>
@@ -21,8 +34,7 @@ const AccountInformation = () => {
         <View style={styles.circleImage}>
           <Image
             style={styles.image}
-             source={require('../../assets/images/Vector.png')}
-           // source={{uri :"https://img.freepik.com/free-photo/half-profile-image-beautiful-young-woman-with-bob-hairdo-posing-gazing-with-eyes-full-reproach-suspicion-human-facial-expressions-emotions-reaction-feelings_343059-4660.jpg?w=2000"}}
+            source={require('../../assets/images/Vector.png')}
           />
         </View>
       </View>
@@ -43,7 +55,14 @@ const AccountInformation = () => {
           <View style={styles.row}>
             <Text style={{color: Colors.WHITE, fontSize: 16}}>Weight</Text>
             <View style={styles.secondaryRow}>
-              <Text style={{color: Colors.WHITE, fontSize: 14}}>52.7Kg</Text>
+              {steps?.map(x => {
+                return (
+                  <Text style={{color: Colors.WHITE, fontSize: 14}}>
+                    {x.weight}
+                  </Text>
+                );
+              })}
+
               <TouchableOpacity>
                 <Image source={require('../../assets/images/forward.png')} />
               </TouchableOpacity>

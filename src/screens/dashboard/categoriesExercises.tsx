@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import * as React from 'react';
 import {useNavigation} from '@react-navigation/native';
-import firestore from '@react-native-firebase/firestore';
 import {
   ActivityIndicator,
   Image,
@@ -13,58 +12,67 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
-import {IExercises} from './Home';
-import Spinner from 'react-native-loading-spinner-overlay/lib';
-const ViewAllExercise = () => {
-  const [exercises, setExercises] = useState<IExercises[]>([]);
-  const [loader, setLoader] = useState<boolean>(false);
-  const [refreshingList, setRefreshingList] = useState<boolean>(false);
-  const getExercises = async () => {
-    setLoader(true);
-    setRefreshingList(true);
+import Spinner from 'react-native-loading-spinner-overlay';
+export type ICategoriesExercises = {
+  breakTime: string;
+  equipments: string[];
+  exercises?: string[];
+  image: string;
+  name: string;
+  id: string;
+  sets: [
+    {
+      name: string;
+      time: string;
+    },
+  ];
+};
+const CategoriesExercises = ({route, navigation}: any) => {
+  const {categoryId} = route.params;
+  const [loader, setLoader] = React.useState<boolean>(false);
+  const [categories, setCategories] = React.useState<ICategoriesExercises[]>(
+    [],
+  );
+  const [refreshing, setRefreshing] = React.useState<boolean>(false);
+  const getCategories = async (refresh?: boolean) => {
+    if (refresh) setRefreshing(refresh);
+    setLoader(refresh ? false : true);
     await firestore()
-      .collection('Exercises')
+      .collection(`Categories/${categoryId}/Exercises`)
       .get()
       .then(res => {
         const data = res.docs.map(x => x.data());
-        setExercises(data as IExercises[]);
+        setCategories(data as ICategoriesExercises[]);
       })
       .catch(err => {
         console.log(err, 'on exercises fetch error');
       });
+    setRefreshing(false);
     setLoader(false);
-    setRefreshingList(false);
   };
-  useEffect(() => {
-    getExercises();
-  }, []);
-  const navigation = useNavigation<ReactNavigation.RootParamList | any>();
-  const [selectedTag, setSelectedTag] = React.useState<number>(0);
-  const [tags] = React.useState([
-    'All exercises',
-    'Beginner',
-    'Medium',
-    'Beginner',
-  ]);
+  console.log(categories, 'cateh');
+
+  React.useEffect(() => {
+    getCategories();
+  }, [categoryId]);
+  //   const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   return (
     <View style={styles.container}>
-      {loader && (
-        <Spinner
-          visible={loader}
-          textStyle={{color: Colors.WHITE}}
-          textContent={'Loading...'}
-          overlayColor={'#222332'}
-          customIndicator={<ActivityIndicator color={'#9662F1'} />}
-        />
-      )}
+      <Spinner
+        visible={loader}
+        textStyle={{color: Colors.WHITE}}
+        textContent={'Loading...'}
+        overlayColor={'#222332'}
+        customIndicator={<ActivityIndicator color={'#9662F1'} />}
+      />
       {!loader && (
         <>
           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image source={require('../../assets/images/backButton.png')} />
             </TouchableOpacity>
-
             <View>
               <Text style={{color: Colors.WHITE}}>Exercises</Text>
             </View>
@@ -80,45 +88,29 @@ const ViewAllExercise = () => {
               placeholder="Search something"
               autoFocus={false}
               placeholderTextColor={Colors.WHITE}
-              onChangeText={searchString => console.log(searchString)}
             />
-          </View>
-          <View style={{marginTop: 5}}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {tags.map((x, index) => {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => setSelectedTag(index)}>
-                    <LinearGradient
-                      style={styles.tags}
-                      start={{x: 1, y: 1}}
-                      end={{x: 1, y: 0}}
-                      colors={
-                        selectedTag === index
-                          ? ['#332B8A', '#905DE9']
-                          : ['#2D3450', '#2D3450', '#2D3450']
-                      }>
-                      <Text style={styles.tagText}>{x}</Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
           </View>
           <View style={{flex: 1}}>
             <ScrollView
-              showsVerticalScrollIndicator={false}
               refreshControl={
                 <RefreshControl
                   tintColor={Colors.WHITE}
-                  refreshing={refreshingList}
-                  onRefresh={getExercises}
+                  refreshing={refreshing}
+                  onRefresh={() => getCategories(true)}
                 />
-              }>
-              {exercises.map((x, index) => {
+              }
+              showsVerticalScrollIndicator={false}>
+              {categories.map((x, index) => {
                 return (
-                  <TouchableOpacity key={index} style={styles.list}>
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.list}
+                    onPress={() =>
+                      navigation.navigate('WorkoutDetails', {
+                        id: x.id,
+                        categoryId: categoryId,
+                      })
+                    }>
                     <View
                       style={{
                         flexDirection: 'row',
@@ -134,10 +126,11 @@ const ViewAllExercise = () => {
                         <LinearGradient
                           start={{x: 1, y: 1}}
                           end={{x: 1, y: 0}}
-                          colors={['#CAD0D8', '#CAD0D8']}
+                          colors={['#332B8A', '#905DE9']}
                           style={styles.iconContainer}>
                           <Image
-                            style={{height: 30, width: 43}}
+                            resizeMode="contain"
+                            style={{height: 30, width: 25}}
                             source={{uri: x.image}}
                           />
                         </LinearGradient>
@@ -148,7 +141,7 @@ const ViewAllExercise = () => {
                       </View>
                       <View>
                         <Image
-                          source={require('../../assets/images/warning.png')}
+                          source={require('../../assets/images/forward.png')}
                         />
                       </View>
                     </View>
@@ -167,15 +160,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#222332',
-  },
-  tags: {
-    borderRadius: 20,
-    padding: 10,
-    margin: 10,
-  },
-  tagText: {
-    color: Colors.WHITE,
-    fontSize: 12,
   },
   searchSection: {
     flexDirection: 'row',
@@ -239,4 +223,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
 });
-export default ViewAllExercise;
+export default CategoriesExercises;

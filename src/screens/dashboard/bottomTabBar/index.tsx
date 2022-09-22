@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {TouchableOpacity, Text, View, StyleSheet, Image} from 'react-native';
 import {Colors} from '../../../constants/Colors';
@@ -41,7 +41,9 @@ const BottomTabBar = (props: IProps) => {
           <React.Fragment key={index}>
             {label === 'ViewAllCategory' ||
             label === 'WorkoutDetails' ||
-            label === 'ViewAllExercise' ||label === "AccountInformation" ? null : (
+            label === 'StartWorkout' ||
+            label === 'ViewAllExercise' ||
+            label === 'AccountInformation' || label === 'CategoriesExercises' ? null : (
               <View style={styles.container}>
                 <TouchableOpacity
                   accessibilityRole="image"
@@ -92,8 +94,6 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     alignItems: 'center',
     justifyContent: 'space-between',
-    // paddingHorizontal: 15,
-    // width : "100%",
     flex: 1,
     backgroundColor: '#2D3450',
   },

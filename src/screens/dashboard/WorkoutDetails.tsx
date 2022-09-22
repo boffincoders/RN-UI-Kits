@@ -1,6 +1,6 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Animated,
   Image,
   ScrollView,
@@ -10,8 +10,11 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import firestore from '@react-native-firebase/firestore';
 import AppButton from '../../components/AppButton';
 import {Colors} from '../../constants/Colors';
+import {ICategoriesExercises} from './categoriesExercises';
+import Spinner from 'react-native-loading-spinner-overlay/lib';
 const DATA = [
   {
     id: 1,
@@ -95,265 +98,310 @@ const workout = [
     name: 'Squat jump',
   },
 ];
-const HEADER_EXPANDED_HEIGHT = 300;
-const HEADER_COLLAPSED_HEIGHT = 60;
-const WorkoutDetails = () => {
-  const [scrollY] = useState(new Animated.Value(0));
-  const headerHeight = scrollY.interpolate({
-    inputRange: [0, HEADER_EXPANDED_HEIGHT - HEADER_COLLAPSED_HEIGHT],
-    outputRange: [HEADER_EXPANDED_HEIGHT, HEADER_COLLAPSED_HEIGHT],
-    extrapolate: 'clamp',
-  });
-  const headerTitleOpacity = scrollY.interpolate({
-    inputRange: [0, HEADER_EXPANDED_HEIGHT - HEADER_COLLAPSED_HEIGHT],
-    outputRange: [0, 1],
-    extrapolate: 'clamp',
-  });
-  const heroTitleOpacity = scrollY.interpolate({
-    inputRange: [0, HEADER_EXPANDED_HEIGHT - HEADER_COLLAPSED_HEIGHT],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  });
 
-  const headerTitle = 'HEADER';
-  const navigation = useNavigation<ReactNavigation.RootParamList | any>();
+const WorkoutDetails = ({route, navigation}: any) => {
+  const {id, categoryId} = route?.params;
+  const [loader, setLoader] = useState<boolean>(false);
+  const [exercise, setExercise] = useState<ICategoriesExercises>();
+  const [scrollY] = useState(new Animated.Value(0));
+  const getWorkout = async () => {
+    console.log(`${categoryId}/${id}`, 'ssss');
+    setLoader(true);
+    await firestore()
+      .collection(`Categories/${categoryId}/Exercises`)
+      .doc(id)
+      .get()
+      .then(res => {
+        console.log(res.data(), 'res');
+
+        setExercise(res?.data() as ICategoriesExercises);
+      });
+    setLoader(false);
+  };
+  useEffect(() => {
+    getWorkout();
+  }, [id || categoryId]);
 
   return (
     <>
       <View style={styles.container}>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContainer}
-          onScroll={Animated.event([
-            {
-              nativeEvent: {
-                contentOffset: {
-                  y: scrollY,
+        <Spinner
+          visible={loader}
+          textStyle={{color: Colors.WHITE}}
+          textContent={'Loading...'}
+          overlayColor={'#222332'}
+          customIndicator={<ActivityIndicator color={'#9662F1'} />}
+        />
+        {!loader && (
+          <>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContainer}
+              onScroll={Animated.event([
+                {
+                  nativeEvent: {
+                    contentOffset: {
+                      y: scrollY,
+                    },
+                  },
                 },
-              },
-            },
-          ])}
-          scrollEventThrottle={16}>
-          <Animated.View style={[styles.header]}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                // padding: 10,
-              }}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Image
-                  source={require('../../assets/images/backButton.png')}
-                  style={{tintColor: Colors.WHITE}}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Image
-                  source={require('../../assets/images/heartOutline.png')}
-                  style={{tintColor: Colors.WHITE}}
-                />
-              </TouchableOpacity>
-            </View>
-            {!scrollY ? null : (
-              <View style={{alignSelf: 'center'}}>
-                <Image source={require('../../assets/images/Vector.png')} />
-              </View>
-            )}
-          </Animated.View>
-
-          <View style={styles.card}>
-            <Text style={styles.workoutName}>Upper Body Workout</Text>
-            <Text style={styles.des}>
-              Resistance training, also known as strength
-            </Text>
-            <Text style={styles.des}>
-              training, is an essential component of any
-            </Text>
-            <Text style={styles.des}>
-              fitness routine, especially for your upper body
-            </Text>
-
-            <View style={styles.profileItemsContainer}>
-              <LinearGradient
-                start={{x: 1, y: 1}}
-                end={{x: 1, y: 0}}
-                colors={['#332B8A', '#905DE9']}
-                style={styles.profileItems}>
-                <Image source={require('../../assets/images/time.png')} />
-                <Text style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
-                  30 min
-                </Text>
-              </LinearGradient>
-              <LinearGradient
-                start={{x: 1, y: 1}}
-                end={{x: 1, y: 0}}
-                colors={['#332B8A', '#905DE9']}
-                style={styles.profileItems}>
-                <Image source={require('../../assets/images/fire.png')} />
-                <Text style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
-                  340 kal
-                </Text>
-              </LinearGradient>
-
-              <LinearGradient
-                start={{x: 1, y: 1}}
-                end={{x: 1, y: 0}}
-                colors={['#332B8A', '#905DE9']}
-                style={styles.profileItems}>
-                <Image source={require('../../assets/images/cake.png')} />
-                <Text style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
-                  26 Years
-                </Text>
-              </LinearGradient>
-            </View>
-            <View style={styles.rowContainer}>
-              <Text style={styles.equip}>Equipment</Text>
-              <Text style={styles.items}>2 Items</Text>
-            </View>
-
-            <View style={{flexDirection: 'row', padding: 10}}>
-              <View>
-                <View style={styles.borderBoxes}>
-                  <Image
-                    style={{height: 50, width: 70}}
-                    source={require('../../assets/images/Vector.png')}
-                  />
+              ])}
+              scrollEventThrottle={16}>
+              <Animated.View style={[styles.header]}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    // padding: 10,
+                  }}>
+                  <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Image
+                      source={require('../../assets/images/backButton.png')}
+                      style={{tintColor: Colors.WHITE}}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <Image
+                      source={require('../../assets/images/heartOutline.png')}
+                      style={{tintColor: Colors.WHITE}}
+                    />
+                  </TouchableOpacity>
                 </View>
-                <Text
-                  style={{color: Colors.WHITE, fontSize: 16, marginLeft: 3}}>
-                  2 dumbles
+                {!scrollY ? null : (
+                  <View style={{alignSelf: 'center'}}>
+                    <Image
+                      style={{height: 200, width: 200, resizeMode: 'contain'}}
+                      source={
+                        exercise?.image !== ''
+                          ? {uri: exercise?.image}
+                          : require('../../assets/images/Vector.png')
+                      }
+                    />
+                  </View>
+                )}
+              </Animated.View>
+
+              <View style={styles.card}>
+                <Text style={styles.workoutName}>{exercise?.name}</Text>
+                <Text style={styles.des}>
+                  Resistance training, also known as strength
                 </Text>
-              </View>
-              <View>
-                <View style={styles.borderBoxes}>
-                  <Image
-                    style={{height: 50, width: 70}}
-                    source={require('../../assets/images/Vector.png')}
-                  />
+                <Text style={styles.des}>
+                  training, is an essential component of any
+                </Text>
+                <Text style={styles.des}>
+                  fitness routine, especially for your upper body
+                </Text>
+
+                <View style={styles.profileItemsContainer}>
+                  <LinearGradient
+                    start={{x: 1, y: 1}}
+                    end={{x: 1, y: 0}}
+                    colors={['#332B8A', '#905DE9']}
+                    style={styles.profileItems}>
+                    <Image source={require('../../assets/images/time.png')} />
+                    <Text
+                      style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
+                      30 min
+                    </Text>
+                  </LinearGradient>
+                  <LinearGradient
+                    start={{x: 1, y: 1}}
+                    end={{x: 1, y: 0}}
+                    colors={['#332B8A', '#905DE9']}
+                    style={styles.profileItems}>
+                    <Image source={require('../../assets/images/fire.png')} />
+                    <Text
+                      style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
+                      340 kal
+                    </Text>
+                  </LinearGradient>
+
+                  <LinearGradient
+                    start={{x: 1, y: 1}}
+                    end={{x: 1, y: 0}}
+                    colors={['#332B8A', '#905DE9']}
+                    style={styles.profileItems}>
+                    <Image source={require('../../assets/images/cake.png')} />
+                    <Text
+                      style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
+                      26 Years
+                    </Text>
+                  </LinearGradient>
                 </View>
-                <Text
-                  style={{color: Colors.WHITE, fontSize: 16, marginLeft: 3}}>
-                  Mat
-                </Text>
+                <View style={styles.rowContainer}>
+                  <Text style={styles.equip}>Equipment</Text>
+                  <Text style={styles.items}>2 Items</Text>
+                </View>
+
+                <View style={{flexDirection: 'row', padding: 10}}>
+                  <View>
+                    <View style={styles.borderBoxes}>
+                      <Image
+                        style={{height: 50, width: 70}}
+                        source={require('../../assets/images/Vector.png')}
+                      />
+                    </View>
+                    <Text
+                      style={{
+                        color: Colors.WHITE,
+                        fontSize: 16,
+                        marginLeft: 3,
+                      }}>
+                      2 dumbles
+                    </Text>
+                  </View>
+                  <View>
+                    <View style={styles.borderBoxes}>
+                      <Image
+                        style={{height: 50, width: 70}}
+                        source={require('../../assets/images/Vector.png')}
+                      />
+                    </View>
+                    <Text
+                      style={{
+                        color: Colors.WHITE,
+                        fontSize: 16,
+                        marginLeft: 3,
+                      }}>
+                      Mat
+                    </Text>
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
-          <View style={styles.account}>
-            <View>
-              <View style={styles.listItem}>
-                <Text style={styles.listTitle}>Schedule workout</Text>
-                <TouchableOpacity>
-                  <Image source={require('../../assets/images/forward.png')} />
-                </TouchableOpacity>
+              <View style={styles.account}>
+                <View>
+                  <View style={styles.listItem}>
+                    <Text style={styles.listTitle}>Schedule workout</Text>
+                    <TouchableOpacity>
+                      <Image
+                        source={require('../../assets/images/forward.png')}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.borderListBottom}></View>
+                </View>
+                <View>
+                  <View style={styles.listItem}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Text style={styles.listTitle}>Pick a playlist</Text>
+                    </View>
+                    <TouchableOpacity>
+                      <Image
+                        source={require('../../assets/images/forward.png')}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
-              <View style={styles.borderListBottom}></View>
-            </View>
-            <View>
-              <View style={styles.listItem}>
+              <Text
+                style={{
+                  paddingHorizontal: 10,
+                  paddingVertical: 10,
+                  fontSize: 20,
+                  color: Colors.WHITE,
+                }}>
+                Exercises
+              </Text>
+              <View style={styles.rowContainer}>
+                <Text style={[styles.equip, {fontSize: 16}]}>Warm-up</Text>
                 <View style={{flexDirection: 'row'}}>
-                  <Text style={styles.listTitle}>Pick a playlist</Text>
+                  <Text style={styles.items}>3 Exercises</Text>
+                  <Text style={styles.items}>.</Text>
+                  <Text style={styles.items}>2 Minutes</Text>
                 </View>
-                <TouchableOpacity>
-                  <Image source={require('../../assets/images/forward.png')} />
-                </TouchableOpacity>
               </View>
-            </View>
-          </View>
-          <Text
-            style={{
-              paddingHorizontal: 10,
-              paddingVertical: 10,
-              fontSize: 20,
-              color: Colors.WHITE,
-            }}>
-            Exercises
-          </Text>
-          <View style={styles.rowContainer}>
-            <Text style={[styles.equip, {fontSize: 16}]}>Warm-up</Text>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.items}>3 Exercises</Text>
-              <Text style={styles.items}>.</Text>
-              <Text style={styles.items}>2 Minutes</Text>
-            </View>
-          </View>
-          <View>
-            {exercises.map((x, i) => {
-              return (
-                <View key={i} style={styles.list}>
-                  <View style={{flexDirection: 'row'}}>
-                    <View style={styles.imageContainer}>
+              <View>
+                {exercises.map((x, i) => {
+                  return (
+                    <View key={i} style={styles.list}>
+                      <View style={{flexDirection: 'row'}}>
+                        <View style={styles.imageContainer}>
+                          <Image
+                            source={require('../../assets/images/Vector.png')}
+                            style={{height: 30, width: 40}}
+                          />
+                        </View>
+                        <View style={{marginLeft: 5}}>
+                          <Text style={{color: Colors.WHITE}}>{x.name}</Text>
+                          <Text style={{color: Colors.WHITE}}>0:30</Text>
+                        </View>
+                      </View>
                       <Image
-                        source={require('../../assets/images/Vector.png')}
-                        style={{height: 30, width: 40}}
+                        source={require('../../assets/images/warning.png')}
                       />
                     </View>
-                    <View style={{marginLeft: 5}}>
-                      <Text style={{color: Colors.WHITE}}>{x.name}</Text>
+                  );
+                })}
+                <View style={styles.list}>
+                  <View style={{flexDirection: 'row', paddingHorizontal: 15}}>
+                    <View style={styles.restCircle}>
+                      <Text style={{color: '#9662F1', fontSize: 10}}>
+                        00:30
+                      </Text>
+                    </View>
+                    <View style={{marginLeft: 11}}>
+                      <Text style={{color: Colors.WHITE}}>Rest</Text>
                       <Text style={{color: Colors.WHITE}}>0:30</Text>
                     </View>
                   </View>
-                  <Image source={require('../../assets/images/warning.png')} />
-                </View>
-              );
-            })}
-            <View style={styles.list}>
-              <View style={{flexDirection: 'row', paddingHorizontal: 15}}>
-                <View style={styles.restCircle}>
-                  <Text style={{color: '#9662F1', fontSize: 10}}>00:30</Text>
-                </View>
-                <View style={{marginLeft: 11}}>
-                  <Text style={{color: Colors.WHITE}}>Rest</Text>
-                  <Text style={{color: Colors.WHITE}}>0:30</Text>
                 </View>
               </View>
-            </View>
-          </View>
-          <View style={styles.rowContainer}>
-            <Text style={[styles.equip, {fontSize: 16}]}>Workout</Text>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.items}>3 Exercises</Text>
-              <Text style={styles.items}>.</Text>
-              <Text style={styles.items}>2 Minutes</Text>
-            </View>
-          </View>
-          <View>
-            {workout.map((x, i) => {
-              return (
-                <View key={i} style={styles.list}>
-                  <View style={{flexDirection: 'row'}}>
-                    <View style={styles.imageContainer}>
+              <View style={styles.rowContainer}>
+                <Text style={[styles.equip, {fontSize: 16}]}>Workout</Text>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={styles.items}>3 Exercises</Text>
+                  <Text style={styles.items}>.</Text>
+                  <Text style={styles.items}>2 Minutes</Text>
+                </View>
+              </View>
+              <View>
+                {workout.map((x, i) => {
+                  return (
+                    <View key={i} style={styles.list}>
+                      <View style={{flexDirection: 'row'}}>
+                        <View style={styles.imageContainer}>
+                          <Image
+                            source={require('../../assets/images/Vector.png')}
+                            style={{height: 30, width: 40}}
+                          />
+                        </View>
+                        <View style={{marginLeft: 5}}>
+                          <Text style={{color: Colors.WHITE}}>{x.name}</Text>
+                          <Text style={{color: Colors.WHITE}}>x</Text>
+                          <Text style={{color: Colors.WHITE}}>0:30</Text>
+                        </View>
+                      </View>
                       <Image
-                        source={require('../../assets/images/Vector.png')}
-                        style={{height: 30, width: 40}}
+                        source={require('../../assets/images/warning.png')}
                       />
                     </View>
-                    <View style={{marginLeft: 5}}>
-                      <Text style={{color: Colors.WHITE}}>{x.name}</Text>
-                      <Text style={{color: Colors.WHITE}}>x</Text>
+                  );
+                })}
+                <View style={styles.list}>
+                  <View style={{flexDirection: 'row', paddingHorizontal: 15}}>
+                    <View style={styles.restCircle}>
+                      <Text style={{color: '#9662F1', fontSize: 10}}>
+                        00:30
+                      </Text>
+                    </View>
+                    <View style={{marginLeft: 11}}>
+                      <Text style={{color: Colors.WHITE}}>Rest</Text>
                       <Text style={{color: Colors.WHITE}}>0:30</Text>
                     </View>
                   </View>
-                  <Image source={require('../../assets/images/warning.png')} />
-                </View>
-              );
-            })}
-            <View style={styles.list}>
-              <View style={{flexDirection: 'row', paddingHorizontal: 15}}>
-                <View style={styles.restCircle}>
-                  <Text style={{color: '#9662F1', fontSize: 10}}>00:30</Text>
-                </View>
-                <View style={{marginLeft: 11}}>
-                  <Text style={{color: Colors.WHITE}}>Rest</Text>
-                  <Text style={{color: Colors.WHITE}}>0:30</Text>
                 </View>
               </View>
+            </ScrollView>
+            <View style={{paddingHorizontal: 10, paddingVertical: 5}}>
+              <AppButton
+                title="Start Workout"
+                onPress={() => navigation.navigate('StartWorkout')}
+              />
             </View>
-          </View>
-        </ScrollView>
-        <View style={{paddingHorizontal: 10, paddingVertical: 5}}>
-          <AppButton title="Start Workout" />
-        </View>
+          </>
+        )}
       </View>
     </>
   );

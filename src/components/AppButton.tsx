@@ -1,12 +1,19 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, ButtonProps} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ButtonProps,
+  GestureResponderEvent,
+  StyleSheetProperties,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors} from '../constants/Colors';
 interface IButtonProps {
-  title: string;
+  title?: string;
   onPress?: () => void;
   width?: number | string;
-}
+  }
 const AppButton = ({title, onPress, width}: IButtonProps) => {
   return (
     <TouchableOpacity onPress={onPress}>

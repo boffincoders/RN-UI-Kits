@@ -16,39 +16,6 @@ import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
 import {IUserType} from '.';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
-let categories = [
-  {
-    name: 'Cardio',
-    icon: require('../../assets/images/run.png'),
-  },
-  {
-    name: 'Yoga',
-    icon: require('../../assets/images/yoga.png'),
-  },
-  {
-    name: 'Strech',
-    icon: require('../../assets/images/exe.png'),
-  },
-  {
-    name: 'Gym',
-    icon: require('../../assets/images/lifter.png'),
-  },
-];
-
-export const exercises = [
-  {
-    name: 'Front and Back Lunge',
-  },
-  {
-    name: 'Side Plank',
-  },
-  {
-    name: 'Arm circles',
-  },
-  {
-    name: 'Sumo Squat',
-  },
-];
 export type IPropsUserInfo = {
   currentUser: IUserType;
 };
@@ -59,11 +26,13 @@ export interface IExercises {
 }
 const Home = (props: IPropsUserInfo) => {
   const [exercises, setExercises] = useState<IExercises[]>([]);
+  const [categories, setCategories] = useState<IExercises[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
-  const getExercises = () => {
+  const getExercises = async () => {
     setLoader(true);
-    firestore()
+    await firestore()
       .collection('Exercises')
+      .limit(5)
       .get()
       .then(res => {
         const data = res.docs.map(x => x.data());
@@ -75,8 +44,25 @@ const Home = (props: IPropsUserInfo) => {
     setLoader(false);
   };
 
+  const getCategories = async () => {
+    setLoader(true);
+    await firestore()
+      .collection('Categories')
+      .limit(4)
+      .get()
+      .then(res => {
+        const data = res.docs.map(x => x.data());
+        setCategories(data as IExercises[]);
+      })
+      .catch(err => {
+        console.log(err, 'on categories fetch error');
+      });
+    setLoader(false);
+  };
+
   useEffect(() => {
     getExercises();
+    getCategories();
   }, []);
   const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   return (
@@ -116,7 +102,7 @@ const Home = (props: IPropsUserInfo) => {
                 placeholder="Search something"
                 autoFocus={false}
                 placeholderTextColor={Colors.WHITE}
-                onChangeText={searchString => console.log(searchString)}
+                // onChangeText={searchString => console.log(searchString)}
               />
             </View>
             <View style={styles.bodyHead}>
@@ -139,7 +125,11 @@ const Home = (props: IPropsUserInfo) => {
                       end={{x: 1, y: 0}}
                       colors={['#332B8A', '#905DE9']}
                       style={styles.iconContainer}>
-                      <Image source={x.icon} />
+                      <Image
+                        source={{uri: x.image}}
+                        style={{height: 40, width: 50}}
+                        resizeMode="contain"
+                      />
                       <Text style={{color: Colors.WHITE, fontSize: 14}}>
                         {x.name}
                       </Text>
@@ -266,8 +256,9 @@ const Home = (props: IPropsUserInfo) => {
                     <View style={{flexDirection: 'row'}}>
                       <View style={styles.imageContainer}>
                         <Image
+                         resizeMode="contain"
                           source={{uri: x.image}}
-                          style={{height: 30, width: 40}}
+                          style={{height: 40, width: 40}}
                         />
                       </View>
                       <View style={{marginLeft: 5}}>

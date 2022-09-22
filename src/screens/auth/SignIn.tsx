@@ -97,7 +97,7 @@ const SignIn = () => {
                   (await checkingForSignupSteps).docs.map(async x => {
                     if (x?.data()?.user_id === getUser[0]?.user_id) {
                       let steps: ISignUpSteps[] = x?.data()?.steps;
-                      await storeData('steps', JSON.stringify(steps));
+                      await storeData('steps', steps);
                       return steps.some(x => {
                         if (!x.isCompleted) {
                           navigation.navigate('SignUpSteps');
