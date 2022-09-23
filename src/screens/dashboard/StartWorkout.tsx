@@ -1,14 +1,23 @@
-import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Timer from '../../components/timer';
 import {Colors} from '../../constants/Colors';
-
-const StartWorkout = () => {
+import {ICategoriesExercises} from './categoriesExercises';
+const StartWorkout = ({route, navigation}: any) => {
+  console.log('startWorkout');
+  
+  const [exercise, setExercise] = useState<ICategoriesExercises | undefined>();
+  const data: ICategoriesExercises = route?.params.data;
+  // useEffect(() => {
+  //   setExercise(data);
+  // }, []);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={{color: 'white'}}>Exercise 5/12</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Image source={require('../../assets/images/backButton.png')} />
+        </TouchableOpacity>
         <Text style={styles.time}>05:39</Text>
       </View>
       <LinearGradient
@@ -22,7 +31,7 @@ const StartWorkout = () => {
         />
       </LinearGradient>
       <View>
-        <Timer />
+        <Timer data={data} />
       </View>
     </View>
   );

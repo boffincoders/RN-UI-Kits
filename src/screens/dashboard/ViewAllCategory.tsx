@@ -53,7 +53,7 @@ const ViewAllCategory = () => {
       {!loader && (
         <>
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.goBack(null)}>
               <Image source={require('../../assets/images/backButton.png')} />
             </TouchableOpacity>
             <View>
@@ -84,7 +84,7 @@ const ViewAllCategory = () => {
               }
               showsVerticalScrollIndicator={false}>
               {categories.map((x, index) => {
-                console.log(x,"dsds");
+             
                 
                 return (
                   <TouchableOpacity

@@ -42,6 +42,8 @@ const Dashboard = () => {
     {
       (async () => {
         const currentUser = await getStoredData('currentUser');
+        console.log(currentUser,"user");
+        
         if (currentUser) {
           setCurrentUser(currentUser);
         }
@@ -59,12 +61,12 @@ const Dashboard = () => {
         {props => <Home {...props} currentUser={currentUser as IUserType} />}
       </Tab.Screen>
       <Tab.Screen name="Training" component={Trainings} />
-      <Tab.Screen name="ViewAllCategory" component={ViewAllCategory} />
-      <Tab.Screen name="ViewAllExercise" component={ViewAllExercise} />
       <Tab.Screen name="AccountInformation" component={AccountInformation} />
       <Tab.Screen name="WorkoutDetails" component={WorkoutDetails} />
       <Tab.Screen name="StartWorkout" component={StartWorkout} />
       <Tab.Screen name="Activity" component={Activity} />
+      <Tab.Screen name="ViewAllCategory" component={ViewAllCategory} options={{tabBarStyle : false}} />
+      <Tab.Screen name="ViewAllExercise" component={ViewAllExercise} />
       <Tab.Screen name="CategoriesExercises" component={CategoriesExercises} />
       <Tab.Screen name="Profile">
         {props => <Profile {...props} currentUser={currentUser as IUserType} />}

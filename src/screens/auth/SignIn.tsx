@@ -68,7 +68,7 @@ const SignIn = () => {
     getAllUsers();
     // });
   }, []);
-  console.log(allUsers, 'getUsers');
+
 
   return (
     <View style={styles.container}>

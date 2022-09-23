@@ -22,21 +22,14 @@ const AppRoutes = () => {
   const [currentUser, setCurrentUser] = useState<FirebaseAuthTypes.User | null>(
     null,
   );
-  // useEffect(() => {
-  //   firestore()
-  //     .collection('SignupSteps')
-  //     .get()
-  //     .then(res => { 
-  //       const fullData = res.docs.map(x => x.data())
-  //       fullData.filter((x)=> x.user_id === userId)
-  //     });
-  // }, []);
   const getAllUsers = async () => {
+    //Find user signup steps
     setLoading(true);
     const users = await firestore().collection('Users').get();
     const getData = users.docs.map(async x => {
       if (
-        x?.data()?.email.toLowerCase() === currentUser?.email?.toLowerCase()
+        x?.data()?.email.toLowerCase() === currentUser?.email?.toLowerCase() ||
+        `+91${x?.data()?.phone}` === currentUser?.phoneNumber
       ) {
         const steps = await firestore().collection('SignupSteps').get();
         steps.docs.map(y => {
@@ -61,8 +54,7 @@ const AppRoutes = () => {
     });
     getAllUsers();
   }, [currentUser]);
-  console.log(currentUserSteps,"steps");
-  
+
   const AppStackNavigator = () => {
     return (
       <Stack.Navigator screenOptions={{headerShown: false}}>

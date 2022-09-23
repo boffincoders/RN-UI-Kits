@@ -103,7 +103,7 @@ const SignUp = () => {
           setSpinner(true);
           try {
             auth()
-              .createUserWithEmailAndPassword(values.email,values.password)
+              .createUserWithEmailAndPassword(values.email, values.password)
               .then(async res => {
                 firestore().collection('Users').doc(res.user.uid).set({
                   email: values.email,
@@ -112,7 +112,15 @@ const SignUp = () => {
                   phone: values.phone,
                   user_id: res.user.uid,
                 });
-                await storeData('uid',res.user.uid);
+                await storeData('uid', res.user.uid);
+                await storeData('currentUser', {
+                  email: values.email,
+                  password: values.password,
+                  fullName: values.fullName,
+                  phone: values.phone,
+                  user_id: res.user.uid,
+                });
+                // await storeData('currentUser',res.user);
                 await firestore()
                   .collection('SignupSteps')
                   .doc(res.user.uid)

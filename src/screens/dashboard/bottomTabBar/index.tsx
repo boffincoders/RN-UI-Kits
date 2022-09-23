@@ -43,7 +43,8 @@ const BottomTabBar = (props: IProps) => {
             label === 'WorkoutDetails' ||
             label === 'StartWorkout' ||
             label === 'ViewAllExercise' ||
-            label === 'AccountInformation' || label === 'CategoriesExercises' ? null : (
+            label === 'AccountInformation' ||
+            label === 'CategoriesExercises' ? null : (
               <View style={styles.container}>
                 <TouchableOpacity
                   accessibilityRole="image"

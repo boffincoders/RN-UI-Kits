@@ -35,7 +35,7 @@ const Step2 = ({onInputChanges}: IPropsSteps) => {
     setListLoader(false);
   };
   const [selectedList, setSelectedList] = useState<string>(
-    mainGoals[0]?.name.toString(),
+    mainGoals[0]?.name.toString()
   );
   const {setSignUpdata, signUpdata} = useContext(SignUpInitialValueContext);
   useEffect(() => {
@@ -43,12 +43,14 @@ const Step2 = ({onInputChanges}: IPropsSteps) => {
     setSignUpdata({...signUpdata, mainGoal: selectedList});
   }, []);
   const onMainGoal = (name: string) => {
+    console.log(name,"name");
+    
     setSelectedList(name);
     setSignUpdata({
       ...signUpdata,
       mainGoal: name,
     });
-    onInputChanges({mainGoal: selectedList});
+    onInputChanges({mainGoal: name});
   };
 
   return (

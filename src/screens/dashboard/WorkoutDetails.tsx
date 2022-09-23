@@ -105,7 +105,6 @@ const WorkoutDetails = ({route, navigation}: any) => {
   const [exercise, setExercise] = useState<ICategoriesExercises>();
   const [scrollY] = useState(new Animated.Value(0));
   const getWorkout = async () => {
-    console.log(`${categoryId}/${id}`, 'ssss');
     setLoader(true);
     await firestore()
       .collection(`Categories/${categoryId}/Exercises`)
@@ -397,7 +396,9 @@ const WorkoutDetails = ({route, navigation}: any) => {
             <View style={{paddingHorizontal: 10, paddingVertical: 5}}>
               <AppButton
                 title="Start Workout"
-                onPress={() => navigation.navigate('StartWorkout')}
+                onPress={() =>
+                  navigation.navigate('StartWorkout', {data: exercise})
+                }
               />
             </View>
           </>

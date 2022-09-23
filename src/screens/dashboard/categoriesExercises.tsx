@@ -15,7 +15,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
 import Spinner from 'react-native-loading-spinner-overlay';
-export type ICategoriesExercises = {
+export interface ICategoriesExercises  {
   breakTime: string;
   equipments: string[];
   exercises?: string[];
@@ -26,6 +26,7 @@ export type ICategoriesExercises = {
     {
       name: string;
       time: string;
+      buttonStatus : boolean
     },
   ];
 };

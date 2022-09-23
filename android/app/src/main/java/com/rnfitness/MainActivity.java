@@ -1,6 +1,5 @@
 package com.rnfitness;
 
-
 import com.facebook.react.ReactActivity;
 
 public class MainActivity extends ReactActivity {
@@ -11,6 +10,6 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "socialAuthentication";
+    return "RNFitness";
   }
 }

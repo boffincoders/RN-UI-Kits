@@ -35,7 +35,9 @@ const Profile = (props: IPropsUserInfo) => {
     await storeData('uid', null);
     auth()
       .signOut()
-      .then(() => {});
+      .then(() => {
+        navigation.navigate("SignIn")
+      });
   };
   return (
     <View style={styles.container}>

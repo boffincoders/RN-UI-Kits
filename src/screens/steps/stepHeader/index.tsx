@@ -31,13 +31,14 @@ const StepHeader = ({
         <Image source={require('../../../assets/images/backButton.png')} />
       </TouchableOpacity>
       <Text style={styles.step}>Step {step} of 8</Text>
-      {step > 3 ? (
+      <View></View>
+      {/* {step > 3 ? (
         <TouchableOpacity onPress={onSkipStep}>
           <Text style={{color: Colors.WHITE}}>Skip</Text>
         </TouchableOpacity>
       ) : (
         <View></View>
-      )}
+      )} */}
     </View>
   );
 };

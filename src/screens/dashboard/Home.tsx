@@ -102,7 +102,6 @@ const Home = (props: IPropsUserInfo) => {
                 placeholder="Search something"
                 autoFocus={false}
                 placeholderTextColor={Colors.WHITE}
-                // onChangeText={searchString => console.log(searchString)}
               />
             </View>
             <View style={styles.bodyHead}>
@@ -119,21 +118,28 @@ const Home = (props: IPropsUserInfo) => {
                 pagingEnabled={false}>
                 {categories.map((x, i) => {
                   return (
-                    <LinearGradient
-                      key={i}
-                      start={{x: 1, y: 1}}
-                      end={{x: 1, y: 0}}
-                      colors={['#332B8A', '#905DE9']}
-                      style={styles.iconContainer}>
-                      <Image
-                        source={{uri: x.image}}
-                        style={{height: 40, width: 50}}
-                        resizeMode="contain"
-                      />
-                      <Text style={{color: Colors.WHITE, fontSize: 14}}>
-                        {x.name}
-                      </Text>
-                    </LinearGradient>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate('CategoriesExercises', {
+                          categoryId: x.id,
+                        })
+                      }>
+                      <LinearGradient
+                        key={i}
+                        start={{x: 1, y: 1}}
+                        end={{x: 1, y: 0}}
+                        colors={['#332B8A', '#905DE9']}
+                        style={styles.iconContainer}>
+                        <Image
+                          source={{uri: x.image}}
+                          style={{height: 40, width: 50}}
+                          resizeMode="contain"
+                        />
+                        <Text style={{color: Colors.WHITE, fontSize: 14}}>
+                          {x.name}
+                        </Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
                   );
                 })}
               </ScrollView>
@@ -256,7 +262,7 @@ const Home = (props: IPropsUserInfo) => {
                     <View style={{flexDirection: 'row'}}>
                       <View style={styles.imageContainer}>
                         <Image
-                         resizeMode="contain"
+                          resizeMode="contain"
                           source={{uri: x.image}}
                           style={{height: 40, width: 40}}
                         />

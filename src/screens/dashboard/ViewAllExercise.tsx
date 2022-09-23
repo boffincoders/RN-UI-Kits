@@ -61,7 +61,7 @@ const ViewAllExercise = () => {
       {!loader && (
         <>
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.goBack(null)}>
               <Image source={require('../../assets/images/backButton.png')} />
             </TouchableOpacity>
 
