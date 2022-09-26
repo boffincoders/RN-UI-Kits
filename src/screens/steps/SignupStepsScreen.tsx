@@ -25,7 +25,10 @@ type SignupStepsScreen = {
 };
 let userId: string = '';
 const SignupStepsScreen = (props: SignupStepsScreen) => {
+  const navigation = useNavigation<any>();
   let {steps} = props;
+  console.log(steps, 'fromProps');
+
   const [sendUserStepsData, setSendUserStepsData] =
     useState<ISignUpSteps[]>(steps);
   const [submitStepLoading, setSubmitStepLoading] = useState<boolean>(false);
@@ -39,7 +42,6 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
   const onInputChanges = async (data: ISignUpSteps) => {
     setUserSignupData(data);
   };
-  const navigation = useNavigation<any>();
 
   const getScreen = (step: number) => {
     if (!props.loading)
@@ -68,10 +70,12 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
   useEffect(() => {
     getUserId();
   }, []);
+
   const onContinue = async () => {
     setSubmitStepLoading(true);
     if (step === 1) {
       let newState = [...sendUserStepsData];
+
       newState[0].gender = userSignUpData?.gender;
       newState[0].isCompleted = true;
       newState[0].step = step;
@@ -111,12 +115,15 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
       newState[7].isCompleted = true;
       newState[7].step = step;
     }
+console.log(userSignUpData , "userSignUpData");
 
     await getSignUpUpdatedData(sendUserStepsData);
     setSubmitStepLoading(false);
   };
 
   const getSignUpUpdatedData = async (data: ISignUpSteps[]) => {
+    console.log(data);
+    
     await firestore()
       .collection('SignupSteps')
       .doc(userId)
@@ -125,9 +132,9 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
         steps: data,
       })
       .then(res => {
-        console.log(res);
+        console.log(res, 'hiiii');
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log(err, 'hii'));
     setSubmitStepLoading(false);
     setStep(prevState =>
       prevState > 7 ? navigation.navigate('CreatePlan') : prevState + 1,
@@ -158,8 +165,7 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
               case step: {
                 return _.compact(
                   steps.map(_step => {
-                    if (!_step?.isCompleted)
-                      return getScreen(step);
+                    if (!_step?.isCompleted) return getScreen(step);
                   }),
                 )?.[0];
               }

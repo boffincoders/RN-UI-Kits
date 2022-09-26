@@ -1,9 +1,10 @@
 import {useNavigation} from '@react-navigation/native';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import Toast from 'react-native-simple-toast'
 import {
   ActivityIndicator,
   Image,
@@ -16,11 +17,9 @@ import AppButton from '../../components/AppButton';
 import AppInput from '../../components/AppInput';
 import {Colors} from '../../constants/Colors';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
-import {UserSignupStepsContext} from '../../contextAPI/UserSignupStepsContext';
-import {getStoredData, storeData} from '../../storage';
-import {GoogleLogin} from './socialAuth/GoogleLogin';
-import {FacebookLogin} from './socialAuth/FacebookLogin';
+import {storeData} from '../../storage';
 import AppleLogin from './socialAuth/AppleLogin';
+import GoogleLogin from './socialAuth/GoogleLogin';
 interface ILoginValues {
   email: string;
   password: string;
@@ -110,7 +109,13 @@ const SignIn = () => {
                 }
               })
               .catch(err => {
-                console.log(err);
+                if(err.code === "auth/user-not-found"){
+                  Toast.showWithGravity(
+                    'User not found!',
+                    Toast.LONG,
+                    Toast.TOP,
+                  );
+                }
               });
           } catch (err) {
             console.log(err);
@@ -149,7 +154,6 @@ const SignIn = () => {
                 onChangeText={value => setFieldValue('password', value)}
                 style={styles.inputContainer}
                 autoCapitalize="none"
-
                 secureTextEntry={true}
                 placeholderTextColor={'white'}
               />
@@ -168,15 +172,16 @@ const SignIn = () => {
                     style={{height: 37, width: 30}}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => GoogleLogin()}>
+                {/* <TouchableOpacity onPress={() => GoogleLogin({navigation : navigation})}>
                   <Image source={require('../../assets/images/google.png')} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+                <GoogleLogin navigation={navigation} />
               </View>
             </View>
             <View style={styles.footer}>
               <Text style={{color: '#F1F4F8'}}>Don't have an account?</Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('SignUp', {})}>
+                onPress={() => navigation.navigate('SignUp')}>
                 <Text style={{color: '#9662F1'}}>Sign Up</Text>
               </TouchableOpacity>
             </View>

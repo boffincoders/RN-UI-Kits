@@ -1,15 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import firestore from '@react-native-firebase/firestore'
 import {Colors} from '../../constants/Colors';
 import {SignUpInitialValueContext} from '../../contextAPI/UserSignupContext';
-import { ISignUpSteps } from '../auth/SignIn';
+import {ISignUpSteps} from '../auth/SignIn';
 let gender = [
   {
     name: 'Woman',
@@ -21,22 +16,14 @@ let gender = [
   },
 ];
 export type IPropsSteps = {
-  onInputChanges: (value : ISignUpSteps) => void;
+  onInputChanges: (value: ISignUpSteps) => void;
 };
 const Step1 = ({onInputChanges}: IPropsSteps) => {
-  const {setSignUpdata, signUpdata} = useContext(SignUpInitialValueContext);
   const [selectedList, setSelectedList] = useState<string>('Woman');
-  useEffect(() => {
-    // setSignUpdata({...signUpdata, gender: selectedList});
-    onInputChanges({gender : selectedList})
-  }, [selectedList]);
+  
   const onPressGender = (data: {name: string; icon: any}) => {
+    onInputChanges({gender: data.name});
     setSelectedList(data.name);
-    setSignUpdata({
-      ...signUpdata,
-      gender: data.name,
-    });
-   
   };
   return (
     <View style={styles.container}>

@@ -33,6 +33,7 @@ const Profile = (props: IPropsUserInfo) => {
   const SignOut = async () => {
     await storeData('currentUser', null);
     await storeData('uid', null);
+    await storeData("steps",null)
     auth()
       .signOut()
       .then(() => {

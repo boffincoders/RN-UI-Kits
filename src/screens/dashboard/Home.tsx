@@ -1,4 +1,4 @@
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
@@ -16,6 +16,8 @@ import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
 import {IUserType} from '.';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
+import {ISignUpSteps} from '../auth/SignIn';
+import {getStoredData} from '../../storage';
 export type IPropsUserInfo = {
   currentUser: IUserType;
 };
@@ -25,6 +27,7 @@ export interface IExercises {
   image: string;
 }
 const Home = (props: IPropsUserInfo) => {
+  const navigation = useNavigation<any>();
   const [exercises, setExercises] = useState<IExercises[]>([]);
   const [categories, setCategories] = useState<IExercises[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
@@ -64,7 +67,7 @@ const Home = (props: IPropsUserInfo) => {
     getExercises();
     getCategories();
   }, []);
-  const navigation = useNavigation<ReactNavigation.RootParamList | any>();
+  // const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   return (
     <View style={styles.container}>
       <Spinner

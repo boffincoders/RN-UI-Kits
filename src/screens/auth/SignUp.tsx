@@ -20,8 +20,8 @@ import Toast from 'react-native-simple-toast';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
 import {storeData} from '../../storage';
 import AppleLogin from './socialAuth/AppleLogin';
-import {GoogleLogin} from './socialAuth/GoogleLogin';
-let steps = [
+import GoogleLogin from './socialAuth/GoogleLogin';
+export const steps = [
   {
     gender: '',
     isCompleted: false,
@@ -254,9 +254,10 @@ const SignUp = () => {
                     style={{height: 37, width: 30}}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => GoogleLogin()}>
+                {/* <TouchableOpacity onPress={() => GoogleLogin({navigation : navigation})}>
                   <Image source={require('../../assets/images/google.png')} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+                 <GoogleLogin navigation={navigation} />
               </View>
             </View>
           </>

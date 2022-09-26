@@ -74,7 +74,6 @@ const AppRoutes = () => {
             component={PhoneVerification}
           />
           <Stack.Screen name="CreatePlan" component={CreatePlan} />
-
           <Stack.Screen name="Dashboard" component={Dashboard} />
         </React.Fragment>
       </Stack.Navigator>
