@@ -42,7 +42,6 @@ const AppRoutes = () => {
     setAllUsers(getData);
     setLoading(false);
   };
-
   useEffect(() => {
     auth().onAuthStateChanged(user => {
       if (user) {

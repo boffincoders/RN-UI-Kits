@@ -4,19 +4,36 @@ import {StyleSheet, TouchableOpacity, View, Image, Text} from 'react-native';
 import {Colors} from '../../constants/Colors';
 import {getStoredData} from '../../storage';
 import {ISignUpSteps} from '../auth/SignIn';
+import firestore from '@react-native-firebase/firestore';
+interface ICurrentUser {
+  email: string;
+  fullName: string;
+  password: string;
+  phone: string;
+  user_id: string;
+}
 const AccountInformation = () => {
+  const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   const [steps, setSteps] = useState<ISignUpSteps[]>([]);
+  const [currentUser, setCurrentUser] = useState<null | ICurrentUser>(null);
   const getSteps = async () => {
-    const data = await getStoredData('steps');
-    setSteps(JSON.parse(data));
+    const getCurrentUser = await getStoredData('currentUser');
+    setCurrentUser(getCurrentUser);
+    await firestore()
+      .collection('SignupSteps')
+      .doc(getCurrentUser?.user_id)
+      .get()
+      .then(res => {
+        setSteps(res?.data()?.steps);
+      })
+      .catch(err => console.log(err));
   };
-  useEffect(() => {
-    getSteps();
-  }, [steps]);
-
   console.log(steps, 'steps');
 
-  const navigation = useNavigation<ReactNavigation.RootParamList | any>();
+  useEffect(() => {
+    getSteps();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -44,7 +61,7 @@ const AccountInformation = () => {
             <Text style={{color: Colors.WHITE, fontSize: 16}}>Name</Text>
             <View style={styles.secondaryRow}>
               <Text style={{color: Colors.WHITE, fontSize: 14}}>
-                Deborah Moore
+                {currentUser?.fullName}
               </Text>
               <TouchableOpacity>
                 <Image source={require('../../assets/images/forward.png')} />
@@ -74,9 +91,14 @@ const AccountInformation = () => {
               Date of Birth
             </Text>
             <View style={styles.secondaryRow}>
-              <Text style={{color: Colors.WHITE, fontSize: 14}}>
-                Nov 30, 1990
-              </Text>
+              {steps?.map(x => {
+                return (
+                  <Text style={{color: Colors.WHITE, fontSize: 14}}>
+                    {x?.birthDate}
+                  </Text>
+                );
+              })}
+
               <TouchableOpacity>
                 <Image source={require('../../assets/images/forward.png')} />
               </TouchableOpacity>
@@ -88,7 +110,7 @@ const AccountInformation = () => {
             <Text style={{color: Colors.WHITE, fontSize: 16}}>Email</Text>
             <View style={styles.secondaryRow}>
               <Text style={{color: Colors.WHITE, fontSize: 14}}>
-                deborah.moore@email.com
+                {currentUser?.email}
               </Text>
               <TouchableOpacity>
                 <Image source={require('../../assets/images/forward.png')} />

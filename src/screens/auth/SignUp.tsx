@@ -265,7 +265,7 @@ const SignUp = () => {
       </Formik>
 
       <View style={styles.footer}>
-        <Text style={{color: '#F1F4F8'}}>Don't have an account?</Text>
+        <Text style={{color: '#F1F4F8'}}>Don't have an account? {""}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
           <Text style={{color: '#9662F1'}}>Sign In</Text>
         </TouchableOpacity>

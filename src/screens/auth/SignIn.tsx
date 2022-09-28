@@ -179,7 +179,7 @@ const SignIn = () => {
               </View>
             </View>
             <View style={styles.footer}>
-              <Text style={{color: '#F1F4F8'}}>Don't have an account?</Text>
+              <Text style={{color: '#F1F4F8'}}>Don't have an account? {""}</Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate('SignUp')}>
                 <Text style={{color: '#9662F1'}}>Sign Up</Text>

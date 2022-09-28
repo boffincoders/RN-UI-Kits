@@ -3,11 +3,8 @@ import {
   BottomTabBarProps,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {StyleSheet} from 'react-native';
-import {getStoredData, storeData} from '../../storage';
-import {ISignUpSteps} from '../auth/SignIn';
+import {getStoredData} from '../../storage';
 import AccountInformation from './AccountInformation';
 import Activity from './Activity';
 import BottomTabBar from './bottomTabBar';
@@ -39,7 +36,7 @@ const Dashboard = () => {
       });
     });
   };
-  useEffect(() => {
+  useEffect(() => {    
     getFirebaseSocialLogin();
     {
       (async () => {
@@ -78,11 +75,4 @@ const Dashboard = () => {
     </Tab.Navigator>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 20,
-    paddingHorizontal: 15,
-    backgroundColor: '#2D3450',
-  },
-});
 export default Dashboard;

@@ -16,8 +16,8 @@ import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
 import {IUserType} from '.';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
-import {ISignUpSteps} from '../auth/SignIn';
 import {getStoredData} from '../../storage';
+import {ISignUpSteps} from '../auth/SignIn';
 export type IPropsUserInfo = {
   currentUser: IUserType;
 };
@@ -31,11 +31,25 @@ const Home = (props: IPropsUserInfo) => {
   const [exercises, setExercises] = useState<IExercises[]>([]);
   const [categories, setCategories] = useState<IExercises[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
+  const [steps, setSteps] = useState<ISignUpSteps[]>([]);
   const getExercises = async () => {
+    await firestore()
+      .collection('SignupSteps')
+      .doc(props?.currentUser?.user_id)
+      .get()
+      .then(res => {
+        const data = res.data();
+        setSteps(data?.steps);
+      });
+
     setLoader(true);
     await firestore()
       .collection('Exercises')
-      .limit(5)
+      .where(
+        'activities',
+        'array-contains-any',
+        steps[7]?.InterestedActivities?.map(x => x.id),
+      )
       .get()
       .then(res => {
         const data = res.docs.map(x => x.data());
@@ -48,7 +62,7 @@ const Home = (props: IPropsUserInfo) => {
   };
 
   const getCategories = async () => {
-    setLoader(true);
+    // setLoader(true);
     await firestore()
       .collection('Categories')
       .limit(4)
@@ -60,13 +74,14 @@ const Home = (props: IPropsUserInfo) => {
       .catch(err => {
         console.log(err, 'on categories fetch error');
       });
-    setLoader(false);
+    // setLoader(false);
   };
 
   useEffect(() => {
     getExercises();
     getCategories();
   }, []);
+
   // const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   return (
     <View style={styles.container}>
