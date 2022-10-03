@@ -52,8 +52,7 @@ const AppRoutes = () => {
       }
     });
     getAllUsers();
-  }, [currentUser]);
-
+  }, []);
   const AppStackNavigator = () => {
     return (
       <Stack.Navigator screenOptions={{headerShown: false}}>
@@ -94,7 +93,12 @@ const AppRoutes = () => {
       <SafeAreaView
         edges={['top']}
         style={{flex: 1, backgroundColor: '#222332'}}>
-        <StatusBar translucent backgroundColor={'#222332'} />
+        <StatusBar
+          translucent
+          backgroundColor={'#222332'}
+          barStyle={'default'}
+          networkActivityIndicatorVisible={true}
+        />
         <NavigationContainer>
           <>{isLoggedIn ? <AppStackNavigator /> : <AuthStackNavigator />}</>
         </NavigationContainer>

@@ -1,17 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Timer from '../../components/timer';
 import {Colors} from '../../constants/Colors';
 import {ICategoriesExercises} from './categoriesExercises';
 const StartWorkout = ({route, navigation}: any) => {
-  console.log('startWorkout');
-  
-  const [exercise, setExercise] = useState<ICategoriesExercises | undefined>();
   const data: ICategoriesExercises = route?.params.data;
-  // useEffect(() => {
-  //   setExercise(data);
-  // }, []);
+  const categoryId = route?.params.categoryId;
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -30,9 +32,9 @@ const StartWorkout = ({route, navigation}: any) => {
           style={{height: 150, width: 150, resizeMode: 'contain'}}
         />
       </LinearGradient>
-      <View>
-        <Timer data={data} />
-      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Timer data={data} categoryId={categoryId} />
+      </ScrollView>
     </View>
   );
 };
@@ -46,7 +48,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 15,
     alignItems: 'center',
-    paddingVertical: 10,
+    // paddingVertical: 10,
   },
   time: {
     fontSize: 27,
@@ -57,7 +59,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
-    height: '55%',
+    height: '50%',
     margin: 15,
     borderRadius: 7,
   },

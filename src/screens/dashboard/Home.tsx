@@ -1,4 +1,4 @@
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
@@ -16,8 +16,6 @@ import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
 import {IUserType} from '.';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
-import {getStoredData} from '../../storage';
-import {ISignUpSteps} from '../auth/SignIn';
 export type IPropsUserInfo = {
   currentUser: IUserType;
 };
@@ -27,62 +25,48 @@ export interface IExercises {
   image: string;
 }
 const Home = (props: IPropsUserInfo) => {
+  const steps = props?.currentUser?.steps;
   const navigation = useNavigation<any>();
   const [exercises, setExercises] = useState<IExercises[]>([]);
   const [categories, setCategories] = useState<IExercises[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
-  const [steps, setSteps] = useState<ISignUpSteps[]>([]);
-  const getExercises = async () => {
-    await firestore()
-      .collection('SignupSteps')
-      .doc(props?.currentUser?.user_id)
-      .get()
-      .then(res => {
-        const data = res.data();
-        setSteps(data?.steps);
-      });
-
-    setLoader(true);
-    await firestore()
-      .collection('Exercises')
-      .where(
-        'activities',
-        'array-contains-any',
-        steps[7]?.InterestedActivities?.map(x => x.id),
-      )
-      .get()
-      .then(res => {
-        const data = res.docs.map(x => x.data());
-        setExercises(data as IExercises[]);
-      })
-      .catch(err => {
-        console.log(err, 'on exercises fetch error');
-      });
-    setLoader(false);
-  };
+  useEffect(() => {
+    {
+      (async () => {
+        setLoader(true);
+        const ids = steps![7]?.InterestedActivities?.map(x => x?.id);
+        await firestore()
+          .collection('Exercises')
+          .where('activities', 'array-contains-any', ids)
+          .get()
+          .then(res => {
+            const data = res.docs.map(x => x.data());
+            setExercises(data as IExercises[]);
+          });
+        setLoader(false);
+      })();
+    }
+  }, [props?.currentUser?.user_id]);
 
   const getCategories = async () => {
-    // setLoader(true);
+    setLoader(true);
     await firestore()
       .collection('Categories')
       .limit(4)
       .get()
-      .then(res => {
-        const data = res.docs.map(x => x.data());
+      .then(async res => {
+        const data = await res.docs.map(x => x.data());
         setCategories(data as IExercises[]);
       })
       .catch(err => {
         console.log(err, 'on categories fetch error');
       });
-    // setLoader(false);
+    setLoader(false);
   };
 
   useEffect(() => {
-    getExercises();
     getCategories();
   }, []);
-
-  // const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   return (
     <View style={styles.container}>
       <Spinner
@@ -90,7 +74,7 @@ const Home = (props: IPropsUserInfo) => {
         textStyle={{color: Colors.WHITE}}
         textContent={'Loading...'}
         overlayColor={'#222332'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} />}
+        customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
       />
       {!loader && (
         <>
@@ -137,6 +121,7 @@ const Home = (props: IPropsUserInfo) => {
                 {categories.map((x, i) => {
                   return (
                     <TouchableOpacity
+                      key={i}
                       onPress={() =>
                         navigation.navigate('CategoriesExercises', {
                           categoryId: x.id,

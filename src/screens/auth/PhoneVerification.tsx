@@ -34,7 +34,7 @@ const PhoneVerification = ({route, navigation}: any) => {
         visible={spinner}
         textStyle={{color: Colors.WHITE}}
         textContent={'Loading...'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} />}
+        customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
       />
       <Text style={styles.titleFont}>Phone Verification</Text>
       <Text style={{color: Colors.WHITE, fontSize: 16}}>

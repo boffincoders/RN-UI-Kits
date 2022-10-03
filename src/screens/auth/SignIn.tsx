@@ -75,7 +75,7 @@ const SignIn = () => {
         visible={spinner}
         textStyle={{color: Colors.WHITE}}
         textContent={'Loading...'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} />}
+        customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
       />
       <Formik
         validationSchema={signInValidationSchema}

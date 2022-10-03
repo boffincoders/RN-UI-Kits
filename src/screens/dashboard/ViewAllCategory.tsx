@@ -48,7 +48,7 @@ const ViewAllCategory = () => {
         textStyle={{color: Colors.WHITE}}
         textContent={'Loading...'}
         overlayColor={'#222332'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} />}
+        customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
       />
       {!loader && (
         <>

@@ -129,7 +129,7 @@ const WorkoutDetails = ({route, navigation}: any) => {
           textStyle={{color: Colors.WHITE}}
           textContent={'Loading...'}
           overlayColor={'#222332'}
-          customIndicator={<ActivityIndicator color={'#9662F1'} />}
+          customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
         />
         {!loader && (
           <>
@@ -397,7 +397,7 @@ const WorkoutDetails = ({route, navigation}: any) => {
               <AppButton
                 title="Start Workout"
                 onPress={() =>
-                  navigation.navigate('StartWorkout', {data: exercise})
+                  navigation.navigate('StartWorkout', {data: exercise , categoryId : categoryId})
                 }
               />
             </View>

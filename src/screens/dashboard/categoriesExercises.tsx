@@ -16,15 +16,15 @@ import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
 import Spinner from 'react-native-loading-spinner-overlay';
 export interface ICategoriesExercises  {
-  breakTime: string;
-  equipments: string[];
+  breakTime?: string;
+  equipments?: string[];
   exercises?: string[];
-  image: string;
-  name: string;
-  id: string;
-  sets: [
+  image?: string;
+  name?: string;
+  id?: string;
+  sets?: [
     {
-      name: string;
+      set: string;
       time: string;
       buttonStatus : boolean
     },
@@ -66,7 +66,7 @@ const CategoriesExercises = ({route, navigation}: any) => {
         textStyle={{color: Colors.WHITE}}
         textContent={'Loading...'}
         overlayColor={'#222332'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} />}
+        customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
       />
       {!loader && (
         <>

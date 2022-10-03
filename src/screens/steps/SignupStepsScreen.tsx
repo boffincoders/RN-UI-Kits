@@ -26,10 +26,10 @@ type SignupStepsScreen = {
 };
 let userId: string = '';
 const SignupStepsScreen = (props: SignupStepsScreen) => {
-  const navigation = useNavigation<any>();
   let {steps} = props;
-  const [sendUserStepsData, setSendUserStepsData] =
-    useState<ISignUpSteps[]>(steps);
+  const [step, setStep] = useState<number>(
+    steps.filter(x => !x.isCompleted)?.[0]?.step ?? 1,
+  );
   const [submitStepLoading, setSubmitStepLoading] = useState<boolean>(false);
   const [userSignUpData, setUserSignupData] = useState<ISignUpSteps>({
     step: 1,
@@ -48,9 +48,10 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
       },
     ],
   });
-  const [step, setStep] = useState<number>(
-    steps.filter(x => !x.isCompleted)?.[0]?.step ?? 1,
-  );
+  const navigation = useNavigation<any>();
+  const [sendUserStepsData, setSendUserStepsData] =
+    useState<ISignUpSteps[]>(steps);
+
   const getUserId = async () => {
     userId = await getStoredData('uid');
   };
@@ -82,8 +83,6 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
   };
 
   useEffect(() => {
-    console.log("STEPSSCREEN");
-    
     getUserId();
   }, []);
 
@@ -130,14 +129,12 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
       newState[7].isCompleted = true;
       newState[7].step = step;
     }
-    
+
     await getSignUpUpdatedData(sendUserStepsData);
     setSubmitStepLoading(false);
   };
 
   const getSignUpUpdatedData = async (data: ISignUpSteps[]) => {
-    console.log(data);
-
     await firestore()
       .collection('SignupSteps')
       .doc(userId)
@@ -158,48 +155,55 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
 
   return (
     <View style={styles.container}>
-     { props.loading ?<Spinner
+      <Spinner
         visible={props.loading || submitStepLoading}
         textStyle={{color: Colors.WHITE}}
         textContent={'Loading...'}
         overlayColor={'#222332'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} />}
-      /> :  <>
-        {steps.some(x => !x.isCompleted) ? (
-          <StepHeader
-            step={step}
-            setStep={setStep}
-            currentUserId={userId}
-            steps={steps}
-          />
-        ) : null}
-        {steps.some(x => !x.isCompleted) ? (
-          (() => {
-            switch (step) {
-              case step: {
-                return _.compact(
-                  steps.map(_step => {
-                    if (!_step?.isCompleted) return getScreen(step);
-                  }),
-                )?.[0];
-              }
-              default:
-              // return navigation.navigate('Dashboard');
-            }
-          })()
-        ) : (
-          <Dashboard />
-        )}
+        customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
+      />
 
-        {steps.some(x => !x.isCompleted)
-          ? ValidationButton(step, userSignUpData) && (
-              <View style={styles.buttonFooter}>
-                <AppButton title="Continue" width={350} onPress={onContinue} />
-              </View>
-            )
-          : null}
-      </>}
-     
+      {!props.loading && (
+        <>
+          {steps.some(x => !x.isCompleted) ? (
+            <StepHeader
+              step={step}
+              setStep={setStep}
+              currentUserId={userId}
+              steps={steps}
+            />
+          ) : null}
+          {!props.loading && steps.some(x => !x.isCompleted) ? (
+            (() => {
+              switch (step) {
+                case step: {
+                  return _.compact(
+                    steps.map(_step => {
+                      if (!_step?.isCompleted) return getScreen(step);
+                    }),
+                  )?.[0];
+                }
+                default:
+                // return navigation.navigate('Dashboard');
+              }
+            })()
+          ) : (
+            <Dashboard />
+          )}
+
+          {!props.loading && steps.some(x => !x.isCompleted)
+            ? ValidationButton(step, userSignUpData) && (
+                <View style={styles.buttonFooter}>
+                  <AppButton
+                    title="Continue"
+                    width={350}
+                    onPress={onContinue}
+                  />
+                </View>
+              )
+            : null}
+        </>
+      )}
     </View>
   );
 };

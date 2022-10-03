@@ -1,6 +1,6 @@
-import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   StyleSheet,
   Text,
@@ -8,99 +8,338 @@ import {
   View,
 } from 'react-native';
 import {Colors} from '../../constants/Colors';
+import firestore from '@react-native-firebase/firestore';
 import {ICategoriesExercises} from '../../screens/dashboard/categoriesExercises';
-import AppButton from '../AppButton';
-type ITimerProps = {
+import Modal from 'react-native-modal';
+import Spinner from 'react-native-loading-spinner-overlay';
+import {IUserType} from '../../screens/dashboard';
+import {getStoredData} from '../../storage';
+import RNBeep from 'react-native-a-beep';
+interface ITimerProps {
   data: ICategoriesExercises;
-};
-const Timer = ({data}: ITimerProps) => {
-  const [exerciseData, setExerciseData] = useState<ITimerProps | undefined>({
-    data,
-  });
-  const [time, setTime] = useState<null>(null);
+  categoryId: string;
+}
+interface IExerciseSchedule {
+  id?: string;
+  name?: string;
+  totalSets?: number;
+  sets?: [
+    {
+      name?: string;
+      duration?: string;
+      timeConsuming?: string;
+    },
+  ];
+  user_id?: string;
+  email?: string;
+  createdAt?: string;
+}
+const Timer = (data: ITimerProps) => {
+  const exercises = data?.data;
+  const categoryId = data?.categoryId;
+  const [exerciseData, setExerciseData] = useState<any>();
+  const [timer, setTimer] = useState<any>(null);
+  const [isFinishModal, setIsFinishModal] = useState<boolean>(false);
+  const [loader, setLoader] = useState<boolean>(false);
   const [minutesCounter, setMinutesCounter] = useState<string>('00');
-  const [buttonStatus, setButtonStatus] = useState<boolean>(false);
-  const [isFinished, setIsFinished] = useState(true);
   const [secondsCounter, setSecondsCounter] = useState<string>('00');
-  // let sets: any = [];
-  // data.sets.map((x: any) => {
-  //   return sets.push({...x, buttonStatus: false});
-  // });
-
-  console.log('hiii');
-
+  const [clickedTime, setClickedTime] = useState<{
+    time: string;
+    buttonStatus: boolean;
+    index: number;
+    name: string;
+  }>();
+  const [exerciseSchedule, setExerciseSchedule] = useState<IExerciseSchedule>();
   useEffect(() => {
-    let timer = setInterval(() => {
-      var num = (Number(secondsCounter) + 1).toString(),
-        count = minutesCounter;
-      if (Number(secondsCounter) == 59) {
-        count = (Number(minutesCounter) + 1).toString();
-        num = '00';
-      }
-      setMinutesCounter(count.length == 1 ? '0' + count : count);
-      setSecondsCounter(num.length == 1 ? '0' + num : num);
-    }, 1000);
-    setTime(timer as any);
-    return () => {
-      clearInterval(timer);
-    };
+    {
+      (async () => {
+        setLoader(true);
+        await firestore()
+          .collection(`Categories/${categoryId}/Exercises`)
+          .doc(exercises?.id)
+          .get()
+          .then(res => {
+            const formattedData = {
+              ...res.data(),
+              sets: res?.data()?.sets?.map((x: any, index: number) => {
+                return {
+                  ...x,
+                  buttonStatus: false,
+                  isDisabled: index > 0 ? true : false,
+                };
+              }),
+            };
+            setExerciseData(formattedData);
+          })
+          .catch(err => {
+            console.log(err, 'error on fetching exercises');
+          });
+        setLoader(false);
+      })();
+    }
+  }, [exercises.id]);
+  const getCurrentUser = async () => {
+    const user: IUserType = await getStoredData('currentUser');
+    if (user) {
+      setExerciseSchedule({
+        user_id: user?.user_id!,
+        email: user?.email!,
+        name: exercises.name!,
+        id: exercises.id,
+        totalSets: exercises.sets?.length,
+      });
+    }
+  };
+  useEffect(() => {
+    getCurrentUser();
   }, []);
-  const onFinishTimer = () => {
-    setTime(null);
-    setSecondsCounter('00');
-    setMinutesCounter('00');
-    setIsFinished(false);
+  const handleTimeInterval = () => {
+    let second = secondsCounter;
+    let mint = minutesCounter;
+    let _timer = setInterval(() => {
+      second = (Number(second) + 1).toString();
+      mint = mint;
+      if (Number(second) == 59) {
+        mint = (Number(mint) + 1).toString();
+        second = '00';
+      }
+      if (mint !== minutesCounter)
+        setMinutesCounter(() => (mint.length == 1 ? '0' + mint : mint));
+      if (second !== secondsCounter)
+        setSecondsCounter(() => (second.length == 1 ? '0' + second : second));
+    }, 1000);
+    if (!timer) setTimer(_timer);
+  };
+  const handleTime = (data: any, index: number) => {
+    setClickedTime({...data, index: index});
+    const resetData = exerciseData?.sets?.map((x: any, i: number) => {
+      let obj = {...x};
+      if (index === i) obj.buttonStatus = !data.buttonStatus;
+      return obj;
+    });
+    setExerciseData({...exerciseData.data, sets: resetData});
+    handleTimeInterval();
+  };
+  const handleClearInterval = (data: any, index: number) => {
+    let sets: any = [];
+    setExerciseData((prevState: any) => {
+      prevState.sets[index].buttonStatus = !data.buttonStatus;
+      prevState.sets[index].isDisabled = true;
+      if (
+        index !== undefined &&
+        prevState?.sets[index + 1]?.isDisabled !== undefined
+      ) {
+        prevState.sets[index + 1].isDisabled = false;
+      }
+      return prevState;
+    });
+
+    sets.push({
+      duration: data.time,
+      timeConsuming: `${minutesCounter}:${secondsCounter}`,
+    }),
+      setExerciseSchedule(preData => {
+        return {...preData, sets: sets, createdAt: new Date().toString()};
+      });
+    clearInterval(timer);
+    setTimer(null);
+    setMinutesCounter(() => '00');
+    setSecondsCounter(() => '00');
   };
 
-  const handleTime = (data: any, index: number) => {
-    const resetData = exerciseData?.data.sets.map(x => {
-      return {...x, buttonStatus: !data.buttonStatus};
-    });
-    // setExerciseData(pre => {
-    //   return {...pre, resetData};
-    // });
-    // data.buttonStatus = !data.buttonStatus;
+  const resetSets = () => {
+    const resetState = {
+      ...exerciseData,
+      sets: exerciseData?.sets?.map((x: any, index: number) => {
+        return {
+          ...x,
+          buttonStatus: false,
+          isDisabled: index > 0 ? true : false,
+        };
+      }),
+    };
+    setExerciseData(resetState);
+  };
+
+  const onSubmitSchedule = async () => {
+    await firestore()
+      .collection('UserExerciseSchedule')
+      .add(exerciseSchedule!)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  const checkTimeAndBeep = (
+    index: number,
+    counter: string,
+    givenTime: number,
+  ) => {
+    if (index === clickedTime?.index && Number(counter) > Number(givenTime)) {
+      RNBeep.PlaySysSound(RNBeep.AndroidSoundIDs.TONE_CDMA_ABBR_ALERT);
+      return true;
+    } else return false;
   };
   return (
     <View>
-      <Text style={styles.exeName}>{data?.name}</Text>
-      {exerciseData?.data?.sets?.map((set: any, index: number) => {
-        return (
-          <View style={styles.list} key={index}>
-            <View style={{flexDirection: 'row', paddingHorizontal: 15}}>
-              <View style={{marginLeft: 11}}>
-                {/* <Text style={{color: Colors.WHITE}}>{name}</Text> */}
-                <Text style={styles.timeCount}>{set?.time}</Text>
+      {loader ? (
+        <Spinner
+          visible={loader}
+          textStyle={{color: Colors.WHITE}}
+          textContent={'Loading...'}
+          overlayColor={'#222332'}
+          customIndicator={<ActivityIndicator color={'#9662F1'} size="large" />}
+        />
+      ) : (
+        <View>
+          <Text style={styles.exeName}>{data?.data?.name}</Text>
+          {exerciseData?.sets?.map((set: any, index: number) => {
+            const counter = minutesCounter.concat(secondsCounter);
+            const setTime = set.time.split(':');
+            let givenTime = setTime[1].concat(setTime[2]);
+            return (
+              <View
+                style={[
+                  styles.list,
+                  {backgroundColor: set?.isDisabled ? '#dddddd' : '#2D3450'},
+                ]}
+                key={index}>
+                <View style={{flexDirection: 'row', paddingHorizontal: 2}}>
+                  <View style={{marginLeft: 1}}>
+                    <Text
+                      style={[
+                        styles.timeCount,
+                        {
+                          color: checkTimeAndBeep(index, counter, givenTime)
+                            ? '#f93154'
+                            : 'white',
+                        },
+                      ]}>
+                      {set.buttonStatus
+                        ? `${minutesCounter}:${secondsCounter}`
+                        : '00:00'}
+                    </Text>
+                    <Text style={{color: 'white', paddingHorizontal: 1}}>
+                      {`d ${set.time}`}
+                    </Text>
+                  </View>
+                </View>
+                {set?.isDisabled ? (
+                  <View></View>
+                ) : (
+                  <TouchableOpacity
+                    onPress={() =>
+                      set?.buttonStatus
+                        ? handleClearInterval(set, index)
+                        : handleTime(set, index)
+                    }
+                    disabled={set?.isDisabled ? true : false}>
+                    <Text style={{color: '#9662F1', fontSize: 20}}>
+                      {set?.buttonStatus ? 'Stop' : 'Start'}
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </View>
-            </View>
-            <TouchableOpacity onPress={() => handleTime(set, index)}>
-              <Text style={{color: '#9662F1', fontSize: 20}}>
-                {set?.buttonStatus ? 'Stop' : 'Start'}
-              </Text>
+            );
+          })}
+          <View style={styles.footerButtonContainer}>
+            <TouchableOpacity
+              onPress={() => setIsFinishModal(true)}
+              style={styles.finishButton}>
+              <Text style={styles.finishButtonText}>Finish</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={resetSets} style={styles.resetButton}>
+              <Text style={styles.resetButtonText}>Reset</Text>
             </TouchableOpacity>
           </View>
-        );
-      })}
-      {/* <Text style={styles.timeCount}>
-          {minutesCounter}:{secondsCounter}
-        </Text>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.pauseButton}
-            onPress={() => clearInterval(time)}>
-            <Text style={{color: '#9662F1'}}>Pause</Text>
-          </TouchableOpacity>
-          <AppButton title="Finish" width={150} onPress={onFinishTimer} />
-        </View> */}
+        </View>
+      )}
+
+      <View>
+        <Modal isVisible={isFinishModal}>
+          <View style={styles.content}>
+            {exerciseData?.sets?.some((x: any) => !x.isDisabled) ? (
+              <>
+                <Text style={styles.contentTitle}>
+                  Are you sure you want to finish
+                </Text>
+                <Text style={styles.contentTitle}>
+                  exercise in between sets?
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text style={styles.contentTitle}>
+                  Are you sure you want to finish the
+                </Text>
+                <Text style={styles.contentTitle}>exercise?</Text>
+              </>
+            )}
+            <View style={styles.modalFooter}>
+              <TouchableOpacity onPress={onSubmitSchedule}>
+                <Text style={{fontSize: 20, color: '#f93154'}}>Yes</Text>
+              </TouchableOpacity>
+
+              <Text> </Text>
+              <TouchableOpacity onPress={() => setIsFinishModal(false)}>
+                <Text style={{fontSize: 20, color: '#9662F1'}}>No</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </View>
     </View>
   );
 };
 const styles = StyleSheet.create({
+  content: {
+    backgroundColor: 'white',
+    padding: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  contentTitle: {
+    fontSize: 16,
+    // marginBottom: 12,
+  },
+  finishButton: {
+    backgroundColor: '#f93154',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    width: 100,
+    borderRadius: 20,
+  },
+  resetButton: {
+    borderWidth: 1,
+    borderColor: '#9662F1',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    width: 100,
+    borderRadius: 20,
+  },
   timeCount: {
     fontSize: 29,
     fontWeight: '700',
     color: Colors.WHITE,
     textAlign: 'center',
+  },
+  finishButtonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  resetButtonText: {
+    color: '#9662F1',
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '600',
   },
   exeName: {
     fontSize: 20,
@@ -148,6 +387,20 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     width: 150,
     alignItems: 'center',
+  },
+  footerButtonContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 5,
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    // alignSelf: 'flex-end',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    marginTop: 15,
   },
 });
 export default Timer;

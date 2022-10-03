@@ -61,7 +61,7 @@ const Step2 = ({onInputChanges}: IPropsSteps) => {
             visible={listLoader}
             textStyle={{color: Colors.WHITE}}
             textContent={'Loading...'}
-            customIndicator={<ActivityIndicator color={'#9662F1'} />}
+            customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
           />
           <Text style={styles.gender}>Choose main goal</Text>
           {!listLoader &&

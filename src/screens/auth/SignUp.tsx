@@ -88,7 +88,7 @@ const SignUp = () => {
         visible={spinner}
         textStyle={{color: Colors.WHITE}}
         textContent={'Loading...'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} />}
+        customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
       />
       <Text style={styles.titleFont}>Sign Up</Text>
       <Formik
