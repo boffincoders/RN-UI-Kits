@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Dimensions,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -38,9 +39,11 @@ const Timer = (data: ITimerProps) => {
   const exercises = data?.data;
   const categoryId = data?.categoryId;
   const [exerciseData, setExerciseData] = useState<any>();
+  const [exerciseSchedule, setExerciseSchedule] = useState<IExerciseSchedule>();
   const [timer, setTimer] = useState<any>(null);
   const [isFinishModal, setIsFinishModal] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
+  const [finishLoader, setFinishLoader] = useState<boolean>(false);
   const [minutesCounter, setMinutesCounter] = useState<string>('00');
   const [secondsCounter, setSecondsCounter] = useState<string>('00');
   const [clickedTime, setClickedTime] = useState<{
@@ -49,7 +52,6 @@ const Timer = (data: ITimerProps) => {
     index: number;
     name: string;
   }>();
-  const [exerciseSchedule, setExerciseSchedule] = useState<IExerciseSchedule>();
   useEffect(() => {
     {
       (async () => {
@@ -87,6 +89,8 @@ const Timer = (data: ITimerProps) => {
         name: exercises.name!,
         id: exercises.id,
         totalSets: exercises.sets?.length,
+        sets: [{timeConsuming: '', duration: ''}],
+        createdAt: new Date().toString(),
       });
     }
   };
@@ -146,7 +150,6 @@ const Timer = (data: ITimerProps) => {
     setMinutesCounter(() => '00');
     setSecondsCounter(() => '00');
   };
-
   const resetSets = () => {
     const resetState = {
       ...exerciseData,
@@ -160,34 +163,40 @@ const Timer = (data: ITimerProps) => {
     };
     setExerciseData(resetState);
   };
-
   const onSubmitSchedule = async () => {
+    setFinishLoader(true);
     await firestore()
       .collection('UserExerciseSchedule')
-      .add(exerciseSchedule!)
+      .add(exerciseSchedule ?? [])
       .then(res => {
         console.log(res);
       })
       .catch(err => {
         console.log(err);
       });
+    setFinishLoader(false);
+    setIsFinishModal(false);
+    resetSets();
   };
-
   const checkTimeAndBeep = (
     index: number,
     counter: string,
     givenTime: number,
   ) => {
     if (index === clickedTime?.index && Number(counter) > Number(givenTime)) {
-      RNBeep.PlaySysSound(RNBeep.AndroidSoundIDs.TONE_CDMA_ABBR_ALERT);
+      if (Platform.OS === 'ios') {
+        RNBeep.beep(true);
+      } else {
+        RNBeep?.PlaySysSound(RNBeep.AndroidSoundIDs.TONE_CDMA_ABBR_ALERT);
+      }
       return true;
     } else return false;
   };
   return (
     <View>
-      {loader ? (
+      {loader || finishLoader ? (
         <Spinner
-          visible={loader}
+          visible={loader || finishLoader}
           textStyle={{color: Colors.WHITE}}
           textContent={'Loading...'}
           overlayColor={'#222332'}

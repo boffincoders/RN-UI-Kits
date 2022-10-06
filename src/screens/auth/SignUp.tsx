@@ -112,6 +112,7 @@ const SignUp = () => {
                   phone: values.phone,
                   user_id: res.user.uid,
                 });
+                await storeData('currentUser',res.user);
                 await storeData('uid', res.user.uid);
                 await storeData('currentUser', {
                   email: values.email,
@@ -120,7 +121,7 @@ const SignUp = () => {
                   phone: values.phone,
                   user_id: res.user.uid,
                 });
-                // await storeData('currentUser',res.user);
+               
                 await firestore()
                   .collection('SignupSteps')
                   .doc(res.user.uid)
@@ -132,12 +133,13 @@ const SignUp = () => {
                     console.log(res);
                   })
                   .catch(err => console.log(err));
-                const confirmCode: FirebaseAuthTypes.ConfirmationResult =
-                  await auth().signInWithPhoneNumber(`+91${values.phone}`);
-                navigation.navigate('PhoneVerification', {
-                  confirm: confirmCode,
-                  collectionId: res.user.uid,
-                });
+                  navigation.navigate("SignUpSteps")
+                // const confirmCode: FirebaseAuthTypes.ConfirmationResult =
+                //   await auth().signInWithPhoneNumber(`+91${values.phone}`);
+                // navigation.navigate('PhoneVerification', {
+                //   confirm: confirmCode,
+                //   collectionId: res.user.uid,
+                // });
                 Toast.showWithGravity(
                   'Code sent successfully',
                   Toast.LONG,

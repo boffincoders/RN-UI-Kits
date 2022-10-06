@@ -1,10 +1,10 @@
 import {useNavigation} from '@react-navigation/native';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import React, { useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import Toast from 'react-native-simple-toast'
+import Toast from 'react-native-simple-toast';
 import {
   ActivityIndicator,
   Image,
@@ -62,12 +62,8 @@ const SignIn = () => {
     setAllUsers(getUsers);
   };
   useEffect(() => {
-    // auth().onAuthStateChanged(user => {
-    // if (user)
     getAllUsers();
-    // });
   }, []);
-
 
   return (
     <View style={styles.container}>
@@ -75,7 +71,7 @@ const SignIn = () => {
         visible={spinner}
         textStyle={{color: Colors.WHITE}}
         textContent={'Loading...'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
+        customIndicator={<ActivityIndicator color={'#9662F1'} size="large" />}
       />
       <Formik
         validationSchema={signInValidationSchema}
@@ -98,6 +94,8 @@ const SignIn = () => {
                       let steps: ISignUpSteps[] = x?.data()?.steps;
                       await storeData('steps', steps);
                       return steps.some(x => {
+                        
+                        
                         if (!x.isCompleted) {
                           navigation.navigate('SignUpSteps');
                         } else {
@@ -109,9 +107,15 @@ const SignIn = () => {
                 }
               })
               .catch(err => {
-                if(err.code === "auth/user-not-found"){
+                if (err.code === 'auth/user-not-found') {
                   Toast.showWithGravity(
                     'User not found!',
+                    Toast.LONG,
+                    Toast.TOP,
+                  );
+                } else if (err.code === 'auth/wrong-password') {
+                  Toast.showWithGravity(
+                    'Wrong password!',
                     Toast.LONG,
                     Toast.TOP,
                   );
@@ -179,9 +183,10 @@ const SignIn = () => {
               </View>
             </View>
             <View style={styles.footer}>
-              <Text style={{color: '#F1F4F8'}}>Don't have an account? {""}</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('SignUp')}>
+              <Text style={{color: '#F1F4F8'}}>
+                Don't have an account? {''}
+              </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
                 <Text style={{color: '#9662F1'}}>Sign Up</Text>
               </TouchableOpacity>
             </View>

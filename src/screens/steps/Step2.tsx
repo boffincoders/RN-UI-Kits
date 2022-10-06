@@ -43,7 +43,6 @@ const Step2 = ({onInputChanges}: IPropsSteps) => {
     setSignUpdata({...signUpdata, mainGoal: selectedList});
   }, []);
   const onMainGoal = (name: string) => {
-    console.log(name,"name");
     
     setSelectedList(name);
     setSignUpdata({

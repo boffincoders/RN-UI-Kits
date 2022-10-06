@@ -42,7 +42,7 @@ const Step8 = ({onInputChanges}: IPropsSteps) => {
       onInputChanges({InterestedActivities: selectedActivities});
     }
   }, [selectedActivities]);
-  console.log(activities, 'sacdsdee');
+  
 
   const selectItem = (data: any) => {
     data.isSelected = !data.isSelected;

@@ -80,7 +80,7 @@ const ViewAllExercise = () => {
               placeholder="Search something"
               autoFocus={false}
               placeholderTextColor={Colors.WHITE}
-              onChangeText={searchString => console.log(searchString)}
+             
             />
           </View>
           <View style={{marginTop: 5}}>

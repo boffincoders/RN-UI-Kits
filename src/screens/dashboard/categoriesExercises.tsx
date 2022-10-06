@@ -53,7 +53,6 @@ const CategoriesExercises = ({route, navigation}: any) => {
     setRefreshing(false);
     setLoader(false);
   };
-  console.log(categories, 'cateh');
 
   React.useEffect(() => {
     getCategories();

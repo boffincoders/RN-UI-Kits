@@ -15,7 +15,7 @@ import AppButton from '../../components/AppButton';
 import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
 import {IUserType} from '.';
-import Spinner from 'react-native-loading-spinner-overlay/lib';
+import Spinner from 'react-native-loading-spinner-overlay';
 export type IPropsUserInfo = {
   currentUser: IUserType;
 };
@@ -26,28 +26,50 @@ export interface IExercises {
 }
 const Home = (props: IPropsUserInfo) => {
   const steps = props?.currentUser?.steps;
+  const [ids, setIds] = useState<string[]>([]);
   const navigation = useNavigation<any>();
   const [exercises, setExercises] = useState<IExercises[]>([]);
   const [categories, setCategories] = useState<IExercises[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
-  useEffect(() => {
-    {
-      (async () => {
-        setLoader(true);
-        const ids = steps![7]?.InterestedActivities?.map(x => x?.id);
-        await firestore()
-          .collection('Exercises')
-          .where('activities', 'array-contains-any', ids)
-          .get()
-          .then(res => {
-            const data = res.docs.map(x => x.data());
-            setExercises(data as IExercises[]);
-          });
-        setLoader(false);
-      })();
-    }
-  }, [props?.currentUser?.user_id]);
+  const hi = async () => {
+    await firestore()
+      .collection('SignupSteps')
+      .doc(props?.currentUser?.user_id)
+      .get()
+      .then(async res => {
+        const data = res?.data();
+       
+        let _data = data?.steps?.filter((c: any) => {
+          if (c?.step === 8 && c.isCompleted) {
+            return c.InterestedActivities;
+          }
+        });
+      
 
+        // setIds(
+        //   () => _data?.[0]?.InterestedActivities?.map((x: any) => x.id) ?? [],
+        // );
+
+        getExercises(
+          _data?.[0]?.InterestedActivities?.map((x: any) => x.id) ?? [],
+        );
+      });
+  };
+  useEffect(() => {
+    hi();
+  }, []);
+  const getExercises = async (ids: string[]) => {
+    setLoader(true);
+    await firestore()
+      .collection('Exercises')
+      // .where('activities', 'array-contains-any', ids)
+      .get()
+      .then(res => {
+        const data = res.docs.map(x => x.data());
+        setExercises(data as IExercises[]);
+      });
+    setLoader(false);
+  };
   const getCategories = async () => {
     setLoader(true);
     await firestore()
@@ -55,7 +77,7 @@ const Home = (props: IPropsUserInfo) => {
       .limit(4)
       .get()
       .then(async res => {
-        const data = await res.docs.map(x => x.data());
+        const data =  res.docs.map(x => x.data());
         setCategories(data as IExercises[]);
       })
       .catch(err => {
@@ -74,7 +96,7 @@ const Home = (props: IPropsUserInfo) => {
         textStyle={{color: Colors.WHITE}}
         textContent={'Loading...'}
         overlayColor={'#222332'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
+        customIndicator={<ActivityIndicator color={'#9662F1'} size="large" />}
       />
       {!loader && (
         <>

@@ -37,7 +37,7 @@ const Profile = (props: IPropsUserInfo) => {
     auth()
       .signOut()
       .then(() => {
-        navigation.navigate("SignIn")
+        // navigation.navigate("SignIn")
       });
   };
   return (

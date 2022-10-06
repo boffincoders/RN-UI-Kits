@@ -3,9 +3,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  ButtonProps,
-  GestureResponderEvent,
-  StyleSheetProperties,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors} from '../constants/Colors';

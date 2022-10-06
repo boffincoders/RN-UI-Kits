@@ -18,7 +18,6 @@ import Spinner from 'react-native-loading-spinner-overlay/lib';
 import {Colors} from '../../constants/Colors';
 import Step3 from './Step3';
 import Dashboard from '../dashboard';
-import {ValidationButton} from '../../utils/validationButton';
 type SignupStepsScreen = {
   steps: ISignUpSteps[];
   loading: boolean;
@@ -27,9 +26,14 @@ type SignupStepsScreen = {
 let userId: string = '';
 const SignupStepsScreen = (props: SignupStepsScreen) => {
   let {steps} = props;
+ 
+  
+
   const [step, setStep] = useState<number>(
     steps.filter(x => !x.isCompleted)?.[0]?.step ?? 1,
   );
+ 
+  
   const [submitStepLoading, setSubmitStepLoading] = useState<boolean>(false);
   const [userSignUpData, setUserSignupData] = useState<ISignUpSteps>({
     step: 1,
@@ -160,7 +164,7 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
         textStyle={{color: Colors.WHITE}}
         textContent={'Loading...'}
         overlayColor={'#222332'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
+        customIndicator={<ActivityIndicator color={'#9662F1'} size="large" />}
       />
 
       {!props.loading && (
@@ -173,7 +177,7 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
               steps={steps}
             />
           ) : null}
-          {!props.loading && steps.some(x => !x.isCompleted) ? (
+          {steps.some(x => !x.isCompleted) ? (
             (() => {
               switch (step) {
                 case step: {
@@ -184,24 +188,18 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
                   )?.[0];
                 }
                 default:
-                // return navigation.navigate('Dashboard');
+                  // return navigation.navigate('Dashboard');
               }
             })()
           ) : (
             <Dashboard />
           )}
 
-          {!props.loading && steps.some(x => !x.isCompleted)
-            ? ValidationButton(step, userSignUpData) && (
-                <View style={styles.buttonFooter}>
-                  <AppButton
-                    title="Continue"
-                    width={350}
-                    onPress={onContinue}
-                  />
-                </View>
-              )
-            : null}
+          {steps.some(x => !x.isCompleted) ? (
+            <View style={styles.buttonFooter}>
+              <AppButton title="Continue" width={350} onPress={onContinue} />
+            </View>
+          ) : null}
         </>
       )}
     </View>

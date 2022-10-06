@@ -19,6 +19,7 @@ import ViewAllExercise from './ViewAllExercise';
 import WorkoutDetails from './WorkoutDetails';
 import {ISignUpSteps} from '../auth/SignIn';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import EditProfile from './editProfile';
 export type IUserType = {
   email?: string | null;
   fullName?: string;
@@ -34,6 +35,8 @@ const Dashboard = () => {
   const Tab = createBottomTabNavigator();
   const getFirebaseSocialLogin = () => {
     auth().onAuthStateChanged(user => {
+ 
+      
       setCurrentUser({
         displayName: user?.displayName,
         email: user?.email,
@@ -41,11 +44,15 @@ const Dashboard = () => {
       });
     });
   };
+
+  
   useEffect(() => {
     getFirebaseSocialLogin();
     {
       (async () => {
         const user = await getStoredData('currentUser');
+   
+        
         if (user) {
           setCurrentUser({...currentUser, ...user});
         }
@@ -59,11 +66,11 @@ const Dashboard = () => {
       .get()
       .then(res => {
         setCurrentUser(prevState => {
-          const steps: ISignUpSteps[] = res?.data()?.steps;
+          const steps: ISignUpSteps[] = res?.data()?.steps;          
           return {...prevState, steps: steps};
         });
       });
-  }, [currentUser]);
+  }, []);
   return (
     <SafeAreaView style={{flex: 1}} edges={['left', 'right']}>
       <Tab.Navigator
@@ -76,6 +83,7 @@ const Dashboard = () => {
         </Tab.Screen>
         <Tab.Screen name="Training" component={Trainings} />
         <Tab.Screen name="AccountInformation" component={AccountInformation} />
+        <Tab.Screen name="EditProfile" component={EditProfile} />
         <Tab.Screen name="WorkoutDetails" component={WorkoutDetails} />
         <Tab.Screen name="StartWorkout" component={StartWorkout} />
         <Tab.Screen name="Activity" component={Activity} />

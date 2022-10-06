@@ -52,7 +52,7 @@ const AppRoutes = () => {
       }
     });
     getAllUsers();
-  }, []);
+  }, [currentUser]);
   const AppStackNavigator = () => {
     return (
       <Stack.Navigator screenOptions={{headerShown: false}}>

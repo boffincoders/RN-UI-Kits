@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {TextInput, TextInputProps} from 'react-native';
 
 const AppInput = ({
@@ -10,10 +10,14 @@ const AppInput = ({
   secureTextEntry,
   autoCapitalize
 }: TextInputProps) => {
+  useEffect(()=>{
+ 
+  },[value])
+  
   return (
     <TextInput
       placeholder={placeholder}
-      value={value}
+      value={value?.toString()}
       onChangeText={onChangeText}
       secureTextEntry={secureTextEntry}
       style={style}

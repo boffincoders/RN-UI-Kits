@@ -111,7 +111,6 @@ const WorkoutDetails = ({route, navigation}: any) => {
       .doc(id)
       .get()
       .then(res => {
-        console.log(res.data(), 'res');
 
         setExercise(res?.data() as ICategoriesExercises);
       });
