@@ -10,28 +10,30 @@ import DatePicker from 'react-native-modern-datepicker';
 import {Colors} from '../../constants/Colors';
 import {IPropsSteps} from './Step1';
 const Step3 = ({onInputChanges}: IPropsSteps) => {
-  const [selectedDate, setSelectedDate] = useState<string>();
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toString());
   return (
     <View style={styles.container}>
       <View style={styles.listContainer}>
         <Text style={styles.gender}>Select birth date</Text>
-
         <LinearGradient
           start={{x: 1, y: 1}}
           end={{x: 1, y: 0}}
           colors={['#332B8A', '#905DE9']}
           style={styles.listItem}>
           <DatePicker
+            current="2022-10-10"
             onDateChange={date => {
               setSelectedDate(date);
               onInputChanges({birthDate: date});
             }}
             selectorStartingYear={1990}
             options={{
-              textDefaultColor: '#332B8A',
-              selectedTextColor: Colors.WHITE,
+              backgroundColor: '#222332',
+              textHeaderColor: 'white',
+              textDefaultColor: 'white',
+              selectedTextColor: 'white',
               mainColor: '#905DE9',
-              textSecondaryColor: '#332B8A',
+              textSecondaryColor: 'white',
               borderColor: 'rgba(122, 146, 165, 0.1)',
             }}
            

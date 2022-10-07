@@ -21,6 +21,12 @@ const App = () => {
   return (
     <UserSignupStepsDataContext>
       <UserSignupDataContext>
+        <StatusBar
+          backgroundColor="#673ab7"
+          barStyle="light-content"
+          hidden={false}
+          translucent={true}
+        />
         <AppRoutes />
       </UserSignupDataContext>
     </UserSignupStepsDataContext>

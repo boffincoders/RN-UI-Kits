@@ -63,8 +63,7 @@ const SignIn = () => {
   };
   useEffect(() => {
     getAllUsers();
-  }, []);
-
+  },[]);
   return (
     <View style={styles.container}>
       <Spinner
@@ -82,6 +81,8 @@ const SignIn = () => {
             await auth()
               .signInWithEmailAndPassword(values.email, values.password)
               .then(async res => {
+                console.log(res , "res");
+                
                 const getUser = allUsers.filter(x => x.email === values.email);
                 await storeData('uid', res.user.uid);
                 await storeData('currentUser', getUser[0]);
@@ -94,8 +95,6 @@ const SignIn = () => {
                       let steps: ISignUpSteps[] = x?.data()?.steps;
                       await storeData('steps', steps);
                       return steps.some(x => {
-                        
-                        
                         if (!x.isCompleted) {
                           navigation.navigate('SignUpSteps');
                         } else {
@@ -107,6 +106,8 @@ const SignIn = () => {
                 }
               })
               .catch(err => {
+                console.log(err , "err");
+                
                 if (err.code === 'auth/user-not-found') {
                   Toast.showWithGravity(
                     'User not found!',
@@ -167,7 +168,7 @@ const SignIn = () => {
             <TouchableOpacity>
               <Text style={styles.forgot_button}>Forgot Password?</Text>
             </TouchableOpacity>
-            <View style={{marginTop: 100}}>
+            {/* <View style={{marginTop: 100}}>
               <Text style={styles.signInWith}>Sign in with</Text>
               <View style={styles.socialIcons}>
                 <TouchableOpacity onPress={() => AppleLogin()}>
@@ -176,12 +177,12 @@ const SignIn = () => {
                     style={{height: 37, width: 30}}
                   />
                 </TouchableOpacity>
-                {/* <TouchableOpacity onPress={() => GoogleLogin({navigation : navigation})}>
+                <TouchableOpacity onPress={() => GoogleLogin({navigation : navigation})}>
                   <Image source={require('../../assets/images/google.png')} />
-                </TouchableOpacity> */}
+                </TouchableOpacity>
                 <GoogleLogin navigation={navigation} />
               </View>
-            </View>
+            </View> */}
             <View style={styles.footer}>
               <Text style={{color: '#F1F4F8'}}>
                 Don't have an account? {''}

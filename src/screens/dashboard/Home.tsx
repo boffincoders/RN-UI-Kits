@@ -9,6 +9,7 @@ import {
   TextInput,
   ScrollView,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AppButton from '../../components/AppButton';
@@ -91,6 +92,12 @@ const Home = (props: IPropsUserInfo) => {
   }, []);
   return (
     <View style={styles.container}>
+       <StatusBar
+                    backgroundColor = "#673ab7"  
+                    barStyle = "light-content"   
+                    hidden = {false}    
+                    translucent = {true}  
+                />  
       <Spinner
         visible={loader}
         textStyle={{color: Colors.WHITE}}

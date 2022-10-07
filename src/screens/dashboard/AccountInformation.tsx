@@ -21,7 +21,8 @@ interface ICurrentUser {
   phone: string;
   user_id: string;
 }
-const AccountInformation = () => {
+const AccountInformation = ({route}: any) => {
+  const updatedSteps: ISignUpSteps[] = route?.params?.steps;
   const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   const [steps, setSteps] = useState<ISignUpSteps[]>([]);
   const [BMIResult, setBMIResult] = useState<string>('');
@@ -38,8 +39,15 @@ const AccountInformation = () => {
       .doc(getCurrentUser?.user_id)
       .get()
       .then(res => {
-        CalculateBMIResult(res?.data()?.steps);
-        setSteps(res?.data()?.steps);
+        if (updatedSteps !== undefined) {
+          if (updatedSteps[4]?.weight || updatedSteps[3]?.height) {
+            CalculateBMIResult(updatedSteps);
+            setSteps(updatedSteps);
+          }
+        } else {
+          CalculateBMIResult(res?.data()?.steps);
+          setSteps(res?.data()?.steps);
+        }
       })
       .catch(err => console.log(err));
     setLoader(false);
@@ -88,8 +96,7 @@ const AccountInformation = () => {
             }
           });
       });
-      await user?.updateEmail(currentUser!?.email?.toString()).then(() => {
-      });
+      await user?.updateEmail(currentUser!?.email?.toString()).then(() => {});
     } catch (err) {
       console.log(err, 'error on onFetch');
     }
@@ -202,9 +209,11 @@ const AccountInformation = () => {
               <View style={styles.row}>
                 <Text style={{color: Colors.WHITE, fontSize: 16}}>Weight</Text>
                 <View style={styles.secondaryRow}>
-                  {steps?.map((x ,index) => {
+                  {steps?.map((x, index) => {
                     return (
-                      <Text style={{color: Colors.WHITE, fontSize: 14}} key={index}>
+                      <Text
+                        style={{color: Colors.WHITE, fontSize: 14}}
+                        key={index}>
                         {x.weight}
                       </Text>
                     );
@@ -212,7 +221,11 @@ const AccountInformation = () => {
                   <TouchableOpacity
                     onPress={() =>
                       navigation.navigate('EditProfile', {
-                        data: {weight: steps[4]?.weight, setSteps: setSteps},
+                        data: {
+                          weight: steps[4]?.weight,
+                          steps: steps,
+                          setSteps: setSteps,
+                        },
                       })
                     }>
                     <Image
@@ -229,9 +242,11 @@ const AccountInformation = () => {
               <View style={styles.row}>
                 <Text style={{color: Colors.WHITE, fontSize: 16}}>Height</Text>
                 <View style={styles.secondaryRow}>
-                  {steps?.map((x , index) => {
+                  {steps?.map((x, index) => {
                     return (
-                      <Text style={{color: Colors.WHITE, fontSize: 14}} key={index}>
+                      <Text
+                        style={{color: Colors.WHITE, fontSize: 14}}
+                        key={index}>
                         {x.height}
                       </Text>
                     );
@@ -239,7 +254,11 @@ const AccountInformation = () => {
                   <TouchableOpacity
                     onPress={() =>
                       navigation.navigate('EditProfile', {
-                        data: {height: steps[4]?.height, setSteps: setSteps},
+                        data: {
+                          height: steps[3]?.height,
+                          steps: steps,
+                          setSteps: setSteps,
+                        },
                       })
                     }>
                     <Image
@@ -254,9 +273,11 @@ const AccountInformation = () => {
                   Date of Birth
                 </Text>
                 <View style={styles.secondaryRow}>
-                  {steps?.map((x , index) => {
+                  {steps?.map((x, index) => {
                     return (
-                      <Text style={{color: Colors.WHITE, fontSize: 14}} key={index}>
+                      <Text
+                        style={{color: Colors.WHITE, fontSize: 14}}
+                        key={index}>
                         {x?.birthDate}
                       </Text>
                     );

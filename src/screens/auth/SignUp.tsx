@@ -247,7 +247,7 @@ const SignUp = () => {
               </Text>
             </View>
             <AppButton title="Sign Up" width={350} onPress={handleSubmit} />
-            <View style={{marginTop: 100}}>
+            {/* <View style={{marginTop: 100}}>
               <Text style={styles.signInWith}>Sign in with</Text>
               <View style={styles.socialIcons}>
                 <TouchableOpacity onPress={() => AppleLogin()}>
@@ -256,12 +256,12 @@ const SignUp = () => {
                     style={{height: 37, width: 30}}
                   />
                 </TouchableOpacity>
-                {/* <TouchableOpacity onPress={() => GoogleLogin({navigation : navigation})}>
+                <TouchableOpacity onPress={() => GoogleLogin({navigation : navigation})}>
                   <Image source={require('../../assets/images/google.png')} />
-                </TouchableOpacity> */}
+                </TouchableOpacity>
                  <GoogleLogin navigation={navigation} />
               </View>
-            </View>
+            </View> */}
           </>
         )}
       </Formik>
@@ -315,10 +315,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   socialIcons: {
-    flexDirection: 'row',
+    // flexDirection: 'row',
     alignItems: 'center',
     textAlign: 'center',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     marginTop: 15,
     width: 90,
     // paddingHorizontal: 10,

@@ -3,6 +3,7 @@ import {Formik} from 'formik';
 import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {
+  ActivityIndicator,
   Image,
   StyleSheet,
   Text,
@@ -17,12 +18,14 @@ import LinearGradient from 'react-native-linear-gradient';
 import AppButton from '../../../components/AppButton';
 import {getStoredData, storeData} from '../../../storage';
 import {ISignUpSteps} from '../../auth/SignIn';
+import Spinner from 'react-native-loading-spinner-overlay/lib';
 type IData = {
   name?: string;
   weight?: string;
   height?: string;
   dateOfBirth?: string;
   email?: string;
+  steps: ISignUpSteps[];
   setSteps: React.Dispatch<React.SetStateAction<ISignUpSteps[]>>;
 };
 interface IEditProfileProps {
@@ -32,7 +35,7 @@ interface IEditProfileProps {
     };
   };
 }
-const heightTypes = [
+const WeightTypes = [
   {
     name: 'Pound',
   },
@@ -40,13 +43,21 @@ const heightTypes = [
     name: 'kilogram',
   },
 ];
+const heightTypes = [
+  {
+    name: 'Feet',
+  },
+  {
+    name: 'Centimetre',
+  },
+];
 const EditProfile = ({route}: IEditProfileProps) => {
-  const {name, dateOfBirth, email, height, weight, setSteps} =
+  const {name, dateOfBirth, email, height, weight, steps, setSteps} =
     route?.params?.data;
-
-    
   const navigation = useNavigation<any>();
   const [selectedWeightType, setSelectedWeightType] = useState<number>(0);
+  const [selectedHeightType, setSelectedHeightType] = useState<number>(0);
+  const [updating, setUpdating] = useState<boolean>(false);
   const [routeProps, setRouteProps] = useState({
     name: '',
     dateOfBirth: '',
@@ -55,17 +66,27 @@ const EditProfile = ({route}: IEditProfileProps) => {
     height: '',
   });
   const splitedWeight = weight?.split(' ');
+  const splitedHeight = height?.split(' ');
   useEffect(() => {
     setRouteProps({
       name: name!,
       weight: weight ? splitedWeight![0]?.toString() : '',
       dateOfBirth: dateOfBirth!,
       email: email!,
-      height: height!,
+      height: height ? splitedHeight![0]?.toString() : '',
     });
   }, [route.params.data]);
+  console.log(routeProps, 'props');
+
   return (
     <View style={styles.container}>
+      <Spinner
+        visible={updating}
+        textStyle={{color: Colors.WHITE}}
+        textContent={'Loading...'}
+        overlayColor={'#222332'}
+        customIndicator={<ActivityIndicator color={'#9662F1'} size="large" />}
+      />
       <View>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -80,9 +101,13 @@ const EditProfile = ({route}: IEditProfileProps) => {
       <View style={styles.account}>
         <Formik
           enableReinitialize
-          onSubmit={async values => {
+          onSubmit={async (values, {resetForm}) => {
+            setUpdating(true);
             const updatedWeight = `${values.weight} ${
               selectedWeightType === 0 ? 'Kg' : 'Lb'
+            }`;
+            const updateHeight = `${values.height} ${
+              selectedWeightType === 0 ? 'feet' : 'centimeter'
             }`;
             const currentUser = await getStoredData('currentUser');
             await storeData('currentUser', {
@@ -90,15 +115,21 @@ const EditProfile = ({route}: IEditProfileProps) => {
               email: values.email ? values.email : currentUser?.email,
               fullName: values.name ? values.name : currentUser?.fullName,
             });
-            // await firestore()
-            //   .collection('SignupSteps')
-            //   .doc(currentUser?.user_id)
-            //   .update({
-            //   steps : firestore.FieldValue.arrayUnion(
-
-            //   )
-            //   });
-            navigation.navigate('AccountInformation', {});
+            setSteps(prevState => {
+              weight
+                ? (prevState[4].weight = updatedWeight)
+                : (prevState[3].height = updateHeight);
+              return prevState;
+            });
+            await firestore()
+              .collection('SignupSteps')
+              .doc(currentUser?.user_id)
+              .update({
+                steps: [...steps],
+              });
+            setUpdating(false);
+            navigation.navigate('AccountInformation', {steps: [...steps]});
+            resetForm();
           }}
           initialValues={
             routeProps?.name
@@ -162,32 +193,28 @@ const EditProfile = ({route}: IEditProfileProps) => {
                     autoCapitalize="none"
                   />
                 </View>
-              ) : weight || height ? (
+              ) : weight ? (
                 <View style={styles.listContainer}>
                   <View style={styles.heightContainer}>
-                    {height
-                      ? ['feet', 'centimeter']
-                      : heightTypes.map((x, i) => {
-                          return (
-                            <TouchableOpacity
-                              key={i}
-                              onPress={() => setSelectedWeightType(i)}>
-                              <LinearGradient
-                                start={{x: 1, y: 1}}
-                                end={{x: 1, y: 0}}
-                                colors={
-                                  selectedWeightType === i
-                                    ? ['#332B8A', '#905DE9']
-                                    : ['#2D3450', '#2D3450']
-                                }
-                                style={styles.selectedHeightStyle}>
-                                <Text style={{color: Colors.WHITE}}>
-                                  {x.name}
-                                </Text>
-                              </LinearGradient>
-                            </TouchableOpacity>
-                          );
-                        })}
+                    {WeightTypes.map((x, i) => {
+                      return (
+                        <TouchableOpacity
+                          key={i}
+                          onPress={() => setSelectedWeightType(i)}>
+                          <LinearGradient
+                            start={{x: 1, y: 1}}
+                            end={{x: 1, y: 0}}
+                            colors={
+                              selectedWeightType === i
+                                ? ['#332B8A', '#905DE9']
+                                : ['#2D3450', '#2D3450']
+                            }
+                            style={styles.selectedHeightStyle}>
+                            <Text style={{color: Colors.WHITE}}>{x.name}</Text>
+                          </LinearGradient>
+                        </TouchableOpacity>
+                      );
+                    })}
                   </View>
                   <View
                     style={{
@@ -223,6 +250,63 @@ const EditProfile = ({route}: IEditProfileProps) => {
                     </Text>
                   </View>
                 </View>
+              ) : height ? (
+                <View style={styles.listContainer}>
+                  <View style={styles.heightContainer}>
+                    {heightTypes.map((x, i) => {
+                      return (
+                        <TouchableOpacity
+                          key={i}
+                          onPress={() => setSelectedHeightType(i)}>
+                          <LinearGradient
+                            start={{x: 1, y: 1}}
+                            end={{x: 1, y: 0}}
+                            colors={
+                              selectedHeightType === i
+                                ? ['#332B8A', '#905DE9']
+                                : ['#2D3450', '#2D3450']
+                            }
+                            style={styles.selectedHeightStyle}>
+                            <Text style={{color: Colors.WHITE}}>{x.name}</Text>
+                          </LinearGradient>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <TextInput
+                      style={{
+                        backgroundColor: '#2D3450',
+                        width: 100,
+                        paddingVertical: 20,
+                        fontSize: 25,
+                        paddingHorizontal: 10,
+                        borderRadius: 10,
+                        marginTop: 30,
+                        color: Colors.WHITE,
+                        fontWeight: 'bold',
+                      }}
+                      maxLength={3}
+                      value={values.height}
+                      keyboardType="numeric"
+                      onChangeText={text => setFieldValue('height', `${text}`)}
+                    />
+                    <Text
+                      style={{
+                        color: Colors.WHITE,
+                        marginLeft: 10,
+                        marginTop: 10,
+                        fontSize: 16,
+                      }}>
+                      {selectedHeightType === 0 ? 'Ft' : 'cm'}
+                    </Text>
+                  </View>
+                </View>
               ) : dateOfBirth ? (
                 <DatePicker
                   onDateChange={date => {
@@ -244,7 +328,6 @@ const EditProfile = ({route}: IEditProfileProps) => {
               ) : (
                 <></>
               )}
-
               <View style={{position: 'absolute', bottom: 10, left: 50}}>
                 <AppButton title="Update" width={300} onPress={handleSubmit} />
               </View>

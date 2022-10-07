@@ -21,6 +21,7 @@ interface IMainGoals {
 }
 const Step2 = ({onInputChanges}: IPropsSteps) => {
   const [mainGoals, setMainGoals] = useState<IMainGoals[]>([]);
+  const [selectedList, setSelectedList] = useState<number>(0);
   const [listLoader, setListLoader] = useState<boolean>(false);
   const getMainGoals = async () => {
     setListLoader(true);
@@ -30,26 +31,18 @@ const Step2 = ({onInputChanges}: IPropsSteps) => {
       .then(response => {
         const data = response.docs.map(x => x.data());
         setMainGoals(data as IMainGoals[]);
+        onInputChanges({mainGoal: data[0]?.name});
+        setSelectedList(0)
       })
       .catch(err => console.log(err));
     setListLoader(false);
   };
-  const [selectedList, setSelectedList] = useState<string>(
-    mainGoals[0]?.name.toString()
-  );
-  const {setSignUpdata, signUpdata} = useContext(SignUpInitialValueContext);
   useEffect(() => {
     getMainGoals();
-    setSignUpdata({...signUpdata, mainGoal: selectedList});
   }, []);
-  const onMainGoal = (name: string) => {
-    
-    setSelectedList(name);
-    setSignUpdata({
-      ...signUpdata,
-      mainGoal: name,
-    });
-    onInputChanges({mainGoal: name});
+  const onMainGoal = (data: any , index : number) => {
+    setSelectedList(index);
+    onInputChanges({mainGoal: data.name});
   };
 
   return (
@@ -66,12 +59,12 @@ const Step2 = ({onInputChanges}: IPropsSteps) => {
           {!listLoader &&
             mainGoals.map((x, i) => {
               return (
-                <TouchableOpacity key={i} onPress={() => onMainGoal(x.name)}>
+                <TouchableOpacity key={i} onPress={() => onMainGoal(x ,i)}>
                   <LinearGradient
                     start={{x: 1, y: 1}}
                     end={{x: 1, y: 0}}
                     colors={
-                      selectedList === x.name
+                      selectedList === i
                         ? ['#332B8A', '#905DE9']
                         : ['#2D3450', '#2D3450']
                     }
@@ -81,7 +74,7 @@ const Step2 = ({onInputChanges}: IPropsSteps) => {
                         start={{x: 1, y: 1}}
                         end={{x: 1, y: 0}}
                         colors={
-                          selectedList === x.name
+                          selectedList === i
                             ? ['#332B8A', '#905DE9']
                             : ['#2D3450', '#2D3450']
                         }

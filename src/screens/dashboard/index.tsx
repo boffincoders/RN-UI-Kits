@@ -20,6 +20,7 @@ import WorkoutDetails from './WorkoutDetails';
 import {ISignUpSteps} from '../auth/SignIn';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import EditProfile from './editProfile';
+import { StatusBar } from 'react-native';
 export type IUserType = {
   email?: string | null;
   fullName?: string;
@@ -73,6 +74,7 @@ const Dashboard = () => {
   }, []);
   return (
     <SafeAreaView style={{flex: 1}} edges={['left', 'right']}>
+      
       <Tab.Navigator
         screenOptions={{headerShown: false}}
         tabBar={(props: BottomTabBarProps) => {
