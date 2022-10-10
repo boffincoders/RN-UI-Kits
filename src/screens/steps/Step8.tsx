@@ -31,10 +31,13 @@ const Step8 = ({onInputChanges}: IPropsSteps) => {
       .collection('Activities')
       .get()
       .then(res => {
-        const fullData = res.docs.map(x => {
-          return {...x.data(), isSelected: false, color: defaultColors};
+        const fullData = res.docs.map((x, index) => {
+          if (index === 0) {
+            return {...x.data(), isSelected: true, color: selectedColors};
+          } else return {...x.data(), isSelected: false, color: defaultColors};
         });
         setActivities(fullData as IActivities[]);
+        onInputChanges({InterestedActivities: fullData as IActivities[]});
       });
   }, []);
   useEffect(() => {
@@ -42,7 +45,6 @@ const Step8 = ({onInputChanges}: IPropsSteps) => {
       onInputChanges({InterestedActivities: selectedActivities});
     }
   }, [selectedActivities]);
-  
 
   const selectItem = (data: any) => {
     data.isSelected = !data.isSelected;

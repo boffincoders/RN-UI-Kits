@@ -3,7 +3,7 @@ import {
   BottomTabBarProps,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {getStoredData} from '../../storage';
 import AccountInformation from './AccountInformation';
 import Activity from './Activity';
@@ -21,6 +21,7 @@ import {ISignUpSteps} from '../auth/SignIn';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import EditProfile from './editProfile';
 import { StatusBar } from 'react-native';
+import { SignUpInitialValueContext } from '../../contextAPI/UserSignupContext';
 export type IUserType = {
   email?: string | null;
   fullName?: string;
@@ -33,11 +34,11 @@ export type IUserType = {
 };
 const Dashboard = () => {
   const [currentUser, setCurrentUser] = useState<IUserType>();
+
+
   const Tab = createBottomTabNavigator();
   const getFirebaseSocialLogin = () => {
     auth().onAuthStateChanged(user => {
- 
-      
       setCurrentUser({
         displayName: user?.displayName,
         email: user?.email,
@@ -45,15 +46,11 @@ const Dashboard = () => {
       });
     });
   };
-
-  
   useEffect(() => {
     getFirebaseSocialLogin();
     {
       (async () => {
         const user = await getStoredData('currentUser');
-   
-        
         if (user) {
           setCurrentUser({...currentUser, ...user});
         }
@@ -72,9 +69,9 @@ const Dashboard = () => {
         });
       });
   }, []);
+ 
   return (
     <SafeAreaView style={{flex: 1}} edges={['left', 'right']}>
-      
       <Tab.Navigator
         screenOptions={{headerShown: false}}
         tabBar={(props: BottomTabBarProps) => {

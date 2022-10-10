@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import AppButton from '../../components/AppButton';
@@ -18,6 +18,10 @@ import Spinner from 'react-native-loading-spinner-overlay/lib';
 import {Colors} from '../../constants/Colors';
 import Step3 from './Step3';
 import Dashboard from '../dashboard';
+import {
+  ISignUpData,
+  SignUpInitialValueContext,
+} from '../../contextAPI/UserSignupContext';
 type SignupStepsScreen = {
   steps: ISignUpSteps[];
   loading: boolean;
@@ -25,15 +29,12 @@ type SignupStepsScreen = {
 };
 let userId: string = '';
 const SignupStepsScreen = (props: SignupStepsScreen) => {
-  let {steps} = props;
- 
-  
+  const {signUpdata, setSignUpdata} = useContext(SignUpInitialValueContext);
 
+  let {steps} = props;
   const [step, setStep] = useState<number>(
     steps.filter(x => !x.isCompleted)?.[0]?.step ?? 1,
   );
- 
-  
   const [submitStepLoading, setSubmitStepLoading] = useState<boolean>(false);
   const [userSignUpData, setUserSignupData] = useState<ISignUpSteps>({
     step: 1,
@@ -60,7 +61,48 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
     userId = await getStoredData('uid');
   };
   const onInputChanges = async (data: ISignUpSteps) => {
-    setUserSignupData(data);
+    console.log();
+    let isValidated = false;
+    let _signUpdata = signUpdata.filter(x => x.step === step)[0];
+    switch (step) {
+      case 1:
+        isValidated = true;
+        break;
+      case 2:
+        isValidated = true;
+        break;
+      case 3:
+        isValidated = data.birthDate !== '' ? true : false;
+        break;
+      case 4:
+        let formattedHeight = parseInt(data.height?.replace(' cm', '') ?? '0');
+        isValidated = formattedHeight ? true : false;
+        break;
+      case 5:
+        let formattedWeight = parseInt(data.weight?.replace(' kg', '') ?? '0');
+        isValidated = formattedWeight ? true : false;
+        break;
+      case 6:
+        let updatedGoalWeight = parseInt(
+          data.goalWeight?.replace(' kg', '') ?? '0',
+        );
+        isValidated = updatedGoalWeight ? true : false;
+        break;
+      case 7:
+        let traingiLevel = data.trainingLevel !== '';
+        isValidated = traingiLevel ? true : false;
+        break;
+      case 8:
+        isValidated =
+          data.InterestedActivities && data?.InterestedActivities[0].name
+            ? true
+            : false;
+        break;
+    }
+
+    _signUpdata = {..._signUpdata, isValidate: isValidated};
+    setSignUpdata(_signUpdata);
+    setUserSignupData({...userSignUpData, ...data});
   };
   const getScreen = (step: number) => {
     if (!props.loading)
@@ -85,7 +127,6 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
         // return navigation.navigate('Dashboard');
       }
   };
-
   useEffect(() => {
     getUserId();
   }, []);
@@ -155,7 +196,6 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
       prevState > 7 ? navigation.navigate('CreatePlan') : prevState + 1,
     );
   };
-  // console.log(userSignUpData?.mainGoal, 'main');
 
   return (
     <View style={styles.container}>
@@ -188,7 +228,7 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
                   )?.[0];
                 }
                 default:
-                  // return navigation.navigate('Dashboard');
+                // return navigation.navigate('Dashboard');
               }
             })()
           ) : (
@@ -196,9 +236,13 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
           )}
 
           {steps.some(x => !x.isCompleted) ? (
-            <View style={styles.buttonFooter}>
-              <AppButton title="Continue" width={350} onPress={onContinue} />
-            </View>
+            signUpdata.find(
+              element => element.step === step && element.isValidate,
+            ) ? (
+              <View style={styles.buttonFooter}>
+                <AppButton title="Continue" width={350} onPress={onContinue} />
+              </View>
+            ) : null
           ) : null}
         </>
       )}

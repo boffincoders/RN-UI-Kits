@@ -1,71 +1,71 @@
 import React, {createContext, useState} from 'react';
-export const SignUpInitialValueContext = createContext<ISignUpDataContext>({
-  signUpdata: {
-    fullName: '',
-    email: '',
-    password: '',
-    phone: '',
-    gender: '',
-    mainGoal: '',
-    birthDate: '',
-    height: '',
-    weight: '',
-    goalWeight: '',
-    trainingLevel: '',
-    InterestedActivities: [
-      {
-        name: '',
-        id: '',
-      },
-    ],
+const signUpdataDefaultValues = [
+  {
+    step: 1,
+    isValidate: true,
   },
-  setSignUpdata: () => {},
+  {
+    step: 2,
+    isValidate: true,
+  },
+  {
+    step: 3,
+    isValidate: false,
+  },
+  {
+    step: 4,
+    isValidate: false,
+  },
+  {
+    step: 5,
+    isValidate: false,
+  },
+  {
+    step: 6,
+    isValidate: false,
+  },
+  {
+    step: 7,
+    isValidate: false,
+  },
+  {
+    step: 8,
+    isValidate: false,
+  },
+];
+export const SignUpInitialValueContext = createContext<ISignUpDataContext>({
+  signUpdata: signUpdataDefaultValues,
+  setSignUpdata: values => {},
 });
-const signUpdataDefaultValues = {
-  fullName: '',
-  email: '',
-  password: '',
-  phone: '',
-  gender: '',
-  mainGoal: '',
-  birthDate: '',
-  height: '',
-  weight: '',
-  goalWeight: '',
-  trainingLevel: '',
-  InterestedActivities: [],
-};
 type Props = {
   children: React.ReactNode;
 };
-interface ISignUpData {
-  fullName?: string;
-  email?: string;
-  password?: string;
-  phone?: string;
-  gender?: string;
-  mainGoal?: string;
-  birthDate?: string;
-  height?: string;
-  weight?: string;
-  goalWeight?: string;
-  trainingLevel?: string;
-  InterestedActivities?: {
-    name: string;
-    id: string;
-  }[];
+export interface ISignUpData {
+  step: number;
+  isValidate: boolean;
 }
 export interface ISignUpDataContext {
-  signUpdata: ISignUpData;
+  signUpdata: ISignUpData[];
   setSignUpdata: (values: ISignUpData) => void;
 }
 export const UserSignupDataContext = ({children}: Props) => {
-  const [signUpdata, setSignUpdata] = useState<ISignUpData>(
+  const [signUpdata, setSignUpdata] = useState<ISignUpData[]>(
     signUpdataDefaultValues,
   );
   return (
     <SignUpInitialValueContext.Provider
-      value={{signUpdata, setSignUpdata: values => setSignUpdata(values)}}>
+      value={{
+        signUpdata,
+        setSignUpdata: values =>
+          setSignUpdata(prevState => {
+            let updatedState = prevState.map(x => {
+              if (values.step === x.step) x.isValidate = values.isValidate;
+              return x;
+            });
+
+            return [...updatedState];
+          }),
+      }}>
       {children}
     </SignUpInitialValueContext.Provider>
   );
