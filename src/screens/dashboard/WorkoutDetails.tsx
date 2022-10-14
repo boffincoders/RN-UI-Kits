@@ -15,110 +15,33 @@ import AppButton from '../../components/AppButton';
 import {Colors} from '../../constants/Colors';
 import {ICategoriesExercises} from './categoriesExercises';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
-const DATA = [
-  {
-    id: 1,
-    title: 'The Hunger Games',
-  },
-  {
-    id: 2,
-    title: 'Harry Potter and the Order of the Phoenix',
-  },
-  {
-    id: 3,
-    title: 'To Kill a Mockingbird',
-  },
-  {
-    id: 4,
-    title: 'Pride and Prejudice',
-  },
-  {
-    id: 5,
-    title: 'Twilight',
-  },
-  {
-    id: 6,
-    title: 'The Book Thief',
-  },
-  {
-    id: 7,
-    title: 'The Chronicles of Narnia',
-  },
-  {
-    id: 8,
-    title: 'Animal Farm',
-  },
-  {
-    id: 9,
-    title: 'Gone with the Wind',
-  },
-  {
-    id: 10,
-    title: 'The Shadow of the Wind',
-  },
-  {
-    id: 11,
-    title: 'The Fault in Our Stars',
-  },
-  {
-    id: 12,
-    title: "The Hitchhiker's Guide to the Galaxy",
-  },
-  {
-    id: 13,
-    title: 'The Giving Tree',
-  },
-  {
-    id: 14,
-    title: 'Wuthering Heights',
-  },
-  {
-    id: 15,
-    title: 'The Da Vinci Code',
-  },
-];
-
-const exercises = [
-  {
-    name: 'Cobra Stretch',
-  },
-  {
-    name: 'Plank Ups',
-  },
-];
-
-const workout = [
-  {
-    name: 'Double Heel Tabs',
-  },
-  {
-    name: 'Lung Jumps Atlernated',
-  },
-  {
-    name: 'Squat jump',
-  },
-];
-
 const WorkoutDetails = ({route, navigation}: any) => {
-  const {id, categoryId} = route?.params;
+  const {id, categoryId,data} = route?.params;
   const [loader, setLoader] = useState<boolean>(false);
   const [exercise, setExercise] = useState<ICategoriesExercises>();
   const [scrollY] = useState(new Animated.Value(0));
   const getWorkout = async () => {
     setLoader(true);
-    await firestore()
-      .collection(`Categories/${categoryId}/Exercises`)
-      .doc(id)
-      .get()
-      .then(res => {
-
-        setExercise(res?.data() as ICategoriesExercises);
-      });
+    if(categoryId){
+      await firestore()
+        .collection(`Categories/${categoryId}/Exercises`)
+        .doc(id)
+        .get()
+        .then(res => {
+          categoryId
+          setExercise(res?.data() as ICategoriesExercises);
+        });
+    }else {
+      setExercise(data)
+    }
     setLoader(false);
   };
   useEffect(() => {
     getWorkout();
   }, [id || categoryId]);
+
+  console.log(exercise ,'data');
+  
 
   return (
     <>
@@ -128,7 +51,7 @@ const WorkoutDetails = ({route, navigation}: any) => {
           textStyle={{color: Colors.WHITE}}
           textContent={'Loading...'}
           overlayColor={'#222332'}
-          customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
+          customIndicator={<ActivityIndicator color={'#9662F1'} size="large" />}
         />
         {!loader && (
           <>
@@ -268,7 +191,7 @@ const WorkoutDetails = ({route, navigation}: any) => {
                   </View>
                 </View>
               </View>
-              <View style={styles.account}>
+              {/* <View style={styles.account}>
                 <View>
                   <View style={styles.listItem}>
                     <Text style={styles.listTitle}>Schedule workout</Text>
@@ -292,8 +215,8 @@ const WorkoutDetails = ({route, navigation}: any) => {
                     </TouchableOpacity>
                   </View>
                 </View>
-              </View>
-              <Text
+              </View> */}
+              {/* <Text
                 style={{
                   paddingHorizontal: 10,
                   paddingVertical: 10,
@@ -301,16 +224,16 @@ const WorkoutDetails = ({route, navigation}: any) => {
                   color: Colors.WHITE,
                 }}>
                 Exercises
-              </Text>
-              <View style={styles.rowContainer}>
+              </Text> */}
+              {/* <View style={styles.rowContainer}>
                 <Text style={[styles.equip, {fontSize: 16}]}>Warm-up</Text>
                 <View style={{flexDirection: 'row'}}>
                   <Text style={styles.items}>3 Exercises</Text>
                   <Text style={styles.items}>.</Text>
                   <Text style={styles.items}>2 Minutes</Text>
                 </View>
-              </View>
-              <View>
+              </View> */}
+              {/* <View>
                 {exercises.map((x, i) => {
                   return (
                     <View key={i} style={styles.list}>
@@ -345,16 +268,16 @@ const WorkoutDetails = ({route, navigation}: any) => {
                     </View>
                   </View>
                 </View>
-              </View>
-              <View style={styles.rowContainer}>
+              </View> */}
+              {/* <View style={styles.rowContainer}>
                 <Text style={[styles.equip, {fontSize: 16}]}>Workout</Text>
                 <View style={{flexDirection: 'row'}}>
                   <Text style={styles.items}>3 Exercises</Text>
                   <Text style={styles.items}>.</Text>
                   <Text style={styles.items}>2 Minutes</Text>
                 </View>
-              </View>
-              <View>
+              </View> */}
+              {/* <View>
                 {workout.map((x, i) => {
                   return (
                     <View key={i} style={styles.list}>
@@ -390,13 +313,16 @@ const WorkoutDetails = ({route, navigation}: any) => {
                     </View>
                   </View>
                 </View>
-              </View>
+              </View> */}
             </ScrollView>
             <View style={{paddingHorizontal: 10, paddingVertical: 5}}>
               <AppButton
                 title="Start Workout"
                 onPress={() =>
-                  navigation.navigate('StartWorkout', {data: exercise , categoryId : categoryId})
+                  navigation.navigate('StartWorkout', {
+                    data: exercise,
+                    categoryId: categoryId,
+                  })
                 }
               />
             </View>

@@ -16,14 +16,16 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import {IUserType} from '../../screens/dashboard';
 import {getStoredData} from '../../storage';
 import RNBeep from 'react-native-a-beep';
+import Toast from 'react-native-simple-toast';
 interface ITimerProps {
-  data: ICategoriesExercises;
+  data: IExerciseSchedule;
   categoryId: string;
 }
-interface IExerciseSchedule {
+export interface IExerciseSchedule {
   id?: string;
   name?: string;
   totalSets?: number;
+  image?: string;
   sets?: [
     {
       name?: string;
@@ -42,6 +44,7 @@ const Timer = (data: ITimerProps) => {
   const [exerciseSchedule, setExerciseSchedule] = useState<IExerciseSchedule>();
   const [timer, setTimer] = useState<any>(null);
   const [isFinishModal, setIsFinishModal] = useState<boolean>(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
   const [finishLoader, setFinishLoader] = useState<boolean>(false);
   const [minutesCounter, setMinutesCounter] = useState<string>('00');
@@ -56,26 +59,40 @@ const Timer = (data: ITimerProps) => {
     {
       (async () => {
         setLoader(true);
-        await firestore()
-          .collection(`Categories/${categoryId}/Exercises`)
-          .doc(exercises?.id)
-          .get()
-          .then(res => {
-            const formattedData = {
-              ...res.data(),
-              sets: res?.data()?.sets?.map((x: any, index: number) => {
-                return {
-                  ...x,
-                  buttonStatus: false,
-                  isDisabled: index > 0 ? true : false,
-                };
-              }),
-            };
-            setExerciseData(formattedData);
-          })
-          .catch(err => {
-            console.log(err, 'error on fetching exercises');
-          });
+        if (categoryId) {
+          await firestore()
+            .collection(`Categories/${categoryId}/Exercises`)
+            .doc(exercises?.id)
+            .get()
+            .then(res => {
+              const formattedData = {
+                ...res.data(),
+                sets: res?.data()?.sets?.map((x: any, index: number) => {
+                  return {
+                    ...x,
+                    buttonStatus: false,
+                    isDisabled: index > 0 ? true : false,
+                  };
+                }),
+              };
+              setExerciseData(formattedData);
+            })
+            .catch(err => {
+              console.log(err, 'error on fetching exercises');
+            });
+        } else {
+          const formattedData = {
+            ...data,
+            sets: data?.data?.sets?.map((x: any, index: number) => {
+              return {
+                ...x,
+                buttonStatus: false,
+                isDisabled: index > 0 ? true : false,
+              };
+            }),
+          };
+          setExerciseData(formattedData);
+        }
         setLoader(false);
       })();
     }
@@ -84,9 +101,9 @@ const Timer = (data: ITimerProps) => {
     const user: IUserType = await getStoredData('currentUser');
     if (user) {
       setExerciseSchedule({
-        user_id: user?.user_id!,
-        email: user?.email!,
-        name: exercises.name!,
+        user_id: user?.user_id ?? '',
+        email: user?.email ?? '',
+        name: exercises.name ?? '',
         id: exercises.id,
         totalSets: exercises.sets?.length,
         sets: [{timeConsuming: '', duration: ''}],
@@ -115,6 +132,7 @@ const Timer = (data: ITimerProps) => {
     if (!timer) setTimer(_timer);
   };
   const handleTime = (data: any, index: number) => {
+    setIsDisabled(true);
     setClickedTime({...data, index: index});
     const resetData = exerciseData?.sets?.map((x: any, i: number) => {
       let obj = {...x};
@@ -123,7 +141,14 @@ const Timer = (data: ITimerProps) => {
     });
     setExerciseData({...exerciseData.data, sets: resetData});
     handleTimeInterval();
-  };
+    // index === 0 &&
+    //   Toast.showWithGravity(
+    //     `You can stop your set time 
+    //     after half time of your exercise set.`,
+    //     Toast.LONG,
+    //     Toast.TOP,
+    //   );
+  };  
   const handleClearInterval = (data: any, index: number) => {
     let sets: any = [];
     setExerciseData((prevState: any) => {
@@ -137,7 +162,6 @@ const Timer = (data: ITimerProps) => {
       }
       return prevState;
     });
-
     sets.push({
       duration: data.time,
       timeConsuming: `${minutesCounter}:${secondsCounter}`,
@@ -145,10 +169,11 @@ const Timer = (data: ITimerProps) => {
       setExerciseSchedule(preData => {
         return {...preData, sets: sets, createdAt: new Date().toString()};
       });
+    setIsDisabled(false);
     clearInterval(timer);
     setTimer(null);
-    setMinutesCounter(() => '00');
-    setSecondsCounter(() => '00');
+    // setMinutesCounter(() => '00');
+    // setSecondsCounter(() => '00');
   };
   const resetSets = () => {
     const resetState = {
@@ -162,6 +187,11 @@ const Timer = (data: ITimerProps) => {
       }),
     };
     setExerciseData(resetState);
+    setIsDisabled(false);
+    clearInterval(timer);
+    setTimer(null);
+    setMinutesCounter(() => '00');
+    setSecondsCounter(() => '00');
   };
   const onSubmitSchedule = async () => {
     setFinishLoader(true);
@@ -185,7 +215,7 @@ const Timer = (data: ITimerProps) => {
   ) => {
     if (index === clickedTime?.index && Number(counter) > Number(givenTime)) {
       if (Platform.OS === 'ios') {
-        RNBeep.beep(true);
+       return true
       } else {
         RNBeep?.PlaySysSound(RNBeep.AndroidSoundIDs.TONE_CDMA_ABBR_ALERT);
       }
@@ -209,15 +239,16 @@ const Timer = (data: ITimerProps) => {
             const counter = minutesCounter.concat(secondsCounter);
             const setTime = set.time.split(':');
             let givenTime = setTime[1].concat(setTime[2]);
+            let variations = givenTime / 2;
             return (
               <View
                 style={[
                   styles.list,
-                  {backgroundColor: set?.isDisabled ? '#dddddd' : '#2D3450'},
+                  {backgroundColor: set?.isDisabled ? '#C0C0C0' : '#2D3450'},
                 ]}
                 key={index}>
-                <View style={{flexDirection: 'row', paddingHorizontal: 2}}>
-                  <View style={{marginLeft: 1}}>
+                <View style={{flexDirection: 'row'}}>
+                  <View>
                     <Text
                       style={[
                         styles.timeCount,
@@ -229,11 +260,15 @@ const Timer = (data: ITimerProps) => {
                       ]}>
                       {set.buttonStatus
                         ? `${minutesCounter}:${secondsCounter}`
+                        : index === clickedTime?.index
+                        ? `${minutesCounter}:${secondsCounter}`
                         : '00:00'}
                     </Text>
-                    <Text style={{color: 'white', paddingHorizontal: 1}}>
-                      {`d ${set.time}`}
-                    </Text>
+                    <View>
+                      <Text style={{color: 'white'}}>
+                        {`duration ${set.time}`}
+                      </Text>
+                    </View>
                   </View>
                 </View>
                 {set?.isDisabled ? (
@@ -245,8 +280,23 @@ const Timer = (data: ITimerProps) => {
                         ? handleClearInterval(set, index)
                         : handleTime(set, index)
                     }
-                    disabled={set?.isDisabled ? true : false}>
-                    <Text style={{color: '#9662F1', fontSize: 20}}>
+                    disabled={
+                      Number(counter) > Number(variations)
+                        ? false
+                        : true && isDisabled
+                        ? true
+                        : false
+                    }>
+                    <Text
+                      style={{
+                        color:
+                          Number(counter) > Number(variations)
+                            ? '#9662F1'
+                            : '#C0C0C0' && isDisabled
+                            ? '#C0C0C0'
+                            : '#9662F1',
+                        fontSize: 20,
+                      }}>
                       {set?.buttonStatus ? 'Stop' : 'Start'}
                     </Text>
                   </TouchableOpacity>
@@ -310,12 +360,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,
-
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
   contentTitle: {
     fontSize: 16,
-    // marginBottom: 12,
   },
   finishButton: {
     backgroundColor: '#f93154',
@@ -375,8 +423,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width * 0.1,
     height: Dimensions.get('window').width * 0.1,
     justifyContent: 'center',
-    // padding : 10,
-    // margin : 5,
     alignItems: 'center',
   },
 
@@ -405,7 +451,6 @@ const styles = StyleSheet.create({
   },
   modalFooter: {
     flexDirection: 'row',
-    // alignSelf: 'flex-end',
     width: '100%',
     alignItems: 'center',
     justifyContent: 'space-around',

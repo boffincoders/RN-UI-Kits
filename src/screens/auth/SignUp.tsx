@@ -1,7 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {
   ActivityIndicator,
@@ -12,15 +12,13 @@ import {
   View,
 } from 'react-native';
 import AppButton from '../../components/AppButton';
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 import AppInput from '../../components/AppInput';
 import {Colors} from '../../constants/Colors';
 import {phoneRegex} from '../../utils/regex';
 import Toast from 'react-native-simple-toast';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
 import {storeData} from '../../storage';
-import AppleLogin from './socialAuth/AppleLogin';
-import GoogleLogin from './socialAuth/GoogleLogin';
 export const steps = [
   {
     gender: '',
@@ -82,14 +80,17 @@ const SignUp = () => {
   const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   const [spinner, setSpinner] = useState<boolean>(false);
   const [checkboxState, setCheckBoxState] = useState(false);
+  useEffect(() => {
+    steps.some(x => {
+      if (!x.isCompleted) {
+        navigation.navigate('SignUpSteps');
+      } else {
+        navigation.navigate('Home');
+      }
+    });
+  }, []);
   return (
     <View style={styles.container}>
-      <Spinner
-        visible={spinner}
-        textStyle={{color: Colors.WHITE}}
-        textContent={'Loading...'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
-      />
       <Text style={styles.titleFont}>Sign Up</Text>
       <Formik
         validationSchema={signupValidationSchema}
@@ -112,7 +113,7 @@ const SignUp = () => {
                   phone: values.phone,
                   user_id: res.user.uid,
                 });
-                await storeData('currentUser',res.user);
+                await storeData('currentUser', res.user);
                 await storeData('uid', res.user.uid);
                 await storeData('currentUser', {
                   email: values.email,
@@ -121,7 +122,7 @@ const SignUp = () => {
                   phone: values.phone,
                   user_id: res.user.uid,
                 });
-               
+
                 await firestore()
                   .collection('SignupSteps')
                   .doc(res.user.uid)
@@ -133,18 +134,18 @@ const SignUp = () => {
                     console.log(res);
                   })
                   .catch(err => console.log(err));
-                  navigation.navigate("SignUpSteps")
+                navigation.navigate('SignUpSteps');
                 // const confirmCode: FirebaseAuthTypes.ConfirmationResult =
                 //   await auth().signInWithPhoneNumber(`+91${values.phone}`);
                 // navigation.navigate('PhoneVerification', {
                 //   confirm: confirmCode,
                 //   collectionId: res.user.uid,
                 // });
-                Toast.showWithGravity(
-                  'Code sent successfully',
-                  Toast.LONG,
-                  Toast.TOP,
-                );
+                // Toast.showWithGravity(
+                //   'Code sent successfully',
+                //   Toast.LONG,
+                //   Toast.TOP,
+                // );
               })
               .catch(err => {
                 if (err.code === 'auth/email-already-in-use') {
@@ -164,6 +165,14 @@ const SignUp = () => {
         }}>
         {({handleSubmit, errors, values, setFieldValue, touched}) => (
           <>
+            <Spinner
+              visible={spinner}
+              textStyle={{color: Colors.WHITE}}
+              textContent={'Loading...'}
+              customIndicator={
+                <ActivityIndicator color={'#9662F1'} size="large" />
+              }
+            />
             <View
               style={[
                 styles.input,
@@ -267,7 +276,7 @@ const SignUp = () => {
       </Formik>
 
       <View style={styles.footer}>
-        <Text style={{color: '#F1F4F8'}}>Don't have an account? {""}</Text>
+        <Text style={{color: '#F1F4F8'}}>Don't have an account? {''}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
           <Text style={{color: '#9662F1'}}>Sign In</Text>
         </TouchableOpacity>

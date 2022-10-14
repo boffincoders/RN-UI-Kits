@@ -3,7 +3,7 @@ import {
   BottomTabBarProps,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {getStoredData} from '../../storage';
 import AccountInformation from './AccountInformation';
 import Activity from './Activity';
@@ -20,8 +20,6 @@ import WorkoutDetails from './WorkoutDetails';
 import {ISignUpSteps} from '../auth/SignIn';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import EditProfile from './editProfile';
-import { StatusBar } from 'react-native';
-import { SignUpInitialValueContext } from '../../contextAPI/UserSignupContext';
 export type IUserType = {
   email?: string | null;
   fullName?: string;
@@ -34,8 +32,6 @@ export type IUserType = {
 };
 const Dashboard = () => {
   const [currentUser, setCurrentUser] = useState<IUserType>();
-
-
   const Tab = createBottomTabNavigator();
   const getFirebaseSocialLogin = () => {
     auth().onAuthStateChanged(user => {
@@ -51,12 +47,11 @@ const Dashboard = () => {
     {
       (async () => {
         const user = await getStoredData('currentUser');
-        if (user) {
-          setCurrentUser({...currentUser, ...user});
-        }
+        if (user) setCurrentUser({...currentUser, ...user});
       })();
     }
   }, []);
+
   useEffect(() => {
     firestore()
       .collection('SignupSteps')
@@ -64,12 +59,12 @@ const Dashboard = () => {
       .get()
       .then(res => {
         setCurrentUser(prevState => {
-          const steps: ISignUpSteps[] = res?.data()?.steps;          
+          const steps: ISignUpSteps[] = res?.data()?.steps;
           return {...prevState, steps: steps};
         });
       });
   }, []);
- 
+
   return (
     <SafeAreaView style={{flex: 1}} edges={['left', 'right']}>
       <Tab.Navigator

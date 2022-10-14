@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {useNavigation} from '@react-navigation/native';
 import {
   ActivityIndicator,
   Image,
@@ -15,7 +14,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
 import Spinner from 'react-native-loading-spinner-overlay';
-export interface ICategoriesExercises  {
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
+export interface ICategoriesExercises {
   breakTime?: string;
   equipments?: string[];
   exercises?: string[];
@@ -26,10 +26,10 @@ export interface ICategoriesExercises  {
     {
       set: string;
       time: string;
-      buttonStatus : boolean
+      buttonStatus: boolean;
     },
   ];
-};
+}
 const CategoriesExercises = ({route, navigation}: any) => {
   const {categoryId} = route.params;
   const [loader, setLoader] = React.useState<boolean>(false);
@@ -57,6 +57,9 @@ const CategoriesExercises = ({route, navigation}: any) => {
   React.useEffect(() => {
     getCategories();
   }, [categoryId]);
+
+  console.log(categoryId, 'issss');
+
   //   const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   return (
     <View style={styles.container}>
@@ -65,93 +68,98 @@ const CategoriesExercises = ({route, navigation}: any) => {
         textStyle={{color: Colors.WHITE}}
         textContent={'Loading...'}
         overlayColor={'#222332'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
+        customIndicator={<ActivityIndicator color={'#9662F1'} size="large" />}
       />
-      {!loader && (
-        <>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Image source={require('../../assets/images/backButton.png')} />
-            </TouchableOpacity>
-            <View>
-              <Text style={{color: Colors.WHITE}}>Exercises</Text>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Image source={require('../../assets/images/backButton.png')} />
+        </TouchableOpacity>
+        <View>
+          <Text style={{color: Colors.WHITE}}>Exercises</Text>
+        </View>
+        <View></View>
+      </View>
+      {!loader &&
+        (categories.length > 0 ? (
+          <>
+            <View style={styles.searchSection}>
+              <Image
+                style={styles.searchIcon}
+                source={require('../../assets/images/search.png')}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Search something"
+                autoFocus={false}
+                placeholderTextColor={Colors.WHITE}
+              />
             </View>
-            <View></View>
-          </View>
-          <View style={styles.searchSection}>
-            <Image
-              style={styles.searchIcon}
-              source={require('../../assets/images/search.png')}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Search something"
-              autoFocus={false}
-              placeholderTextColor={Colors.WHITE}
-            />
-          </View>
-          <View style={{flex: 1}}>
-            <ScrollView
-              refreshControl={
-                <RefreshControl
-                  tintColor={Colors.WHITE}
-                  refreshing={refreshing}
-                  onRefresh={() => getCategories(true)}
-                />
-              }
-              showsVerticalScrollIndicator={false}>
-              {categories.map((x, index) => {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.list}
-                    onPress={() =>
-                      navigation.navigate('WorkoutDetails', {
-                        id: x.id,
-                        categoryId: categoryId,
-                      })
-                    }>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}>
+            <View style={{flex: 1}}>
+              <ScrollView
+                refreshControl={
+                  <RefreshControl
+                    tintColor={Colors.WHITE}
+                    refreshing={refreshing}
+                    onRefresh={() => getCategories(true)}
+                  />
+                }
+                showsVerticalScrollIndicator={false}>
+                {categories.map((x, index) => {
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      style={styles.list}
+                      onPress={() =>
+                        navigation.navigate('WorkoutDetails', {
+                          id: x.id,
+                          categoryId: categoryId,
+                        })
+                      }>
                       <View
                         style={{
                           flexDirection: 'row',
-                          justifyContent: 'center',
+                          justifyContent: 'space-between',
                           alignItems: 'center',
                         }}>
-                        <LinearGradient
-                          start={{x: 1, y: 1}}
-                          end={{x: 1, y: 0}}
-                          colors={['#332B8A', '#905DE9']}
-                          style={styles.iconContainer}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          <LinearGradient
+                            start={{x: 1, y: 1}}
+                            end={{x: 1, y: 0}}
+                            colors={['#332B8A', '#905DE9']}
+                            style={styles.iconContainer}>
+                            <Image
+                              resizeMode="contain"
+                              style={{height: 30, width: 25}}
+                              source={{uri: x.image}}
+                            />
+                          </LinearGradient>
+                          <View style={{marginLeft: 10}}>
+                            <Text style={styles.titleText}>{x.name}</Text>
+                            <Text style={styles.secondaryText}>2 workouts</Text>
+                          </View>
+                        </View>
+                        <View>
                           <Image
-                            resizeMode="contain"
-                            style={{height: 30, width: 25}}
-                            source={{uri: x.image}}
+                            source={require('../../assets/images/forward.png')}
                           />
-                        </LinearGradient>
-                        <View style={{marginLeft: 10}}>
-                          <Text style={styles.titleText}>{x.name}</Text>
-                          <Text style={styles.secondaryText}>2 workouts</Text>
                         </View>
                       </View>
-                      <View>
-                        <Image
-                          source={require('../../assets/images/forward.png')}
-                        />
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </View>
+          </>
+        ) : (
+          <View style={styles.noDataFoundContainer}>
+            <Text style={styles.noDataText}>No data found</Text>
           </View>
-        </>
-      )}
+        ))}
     </View>
   );
 };
@@ -222,5 +230,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
   },
+  noDataFoundContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noDataText: {color: 'white', textAlign: 'center', fontSize: 20},
 });
 export default CategoriesExercises;

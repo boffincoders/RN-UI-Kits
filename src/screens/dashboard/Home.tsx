@@ -10,6 +10,7 @@ import {
   ScrollView,
   ActivityIndicator,
   StatusBar,
+  RefreshControl,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AppButton from '../../components/AppButton';
@@ -17,6 +18,8 @@ import firestore from '@react-native-firebase/firestore';
 import {Colors} from '../../constants/Colors';
 import {IUserType} from '.';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Toast from 'react-native-simple-toast';
+import {IExerciseSchedule} from '../../components/timer';
 export type IPropsUserInfo = {
   currentUser: IUserType;
 };
@@ -26,86 +29,86 @@ export interface IExercises {
   image: string;
 }
 const Home = (props: IPropsUserInfo) => {
-  const steps = props?.currentUser?.steps;
-  const [ids, setIds] = useState<string[]>([]);
   const navigation = useNavigation<any>();
-  const [exercises, setExercises] = useState<IExercises[]>([]);
+  const [exercises, setExercises] = useState<IExerciseSchedule[]>([]);
   const [categories, setCategories] = useState<IExercises[]>([]);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
-  const hi = async () => {
-    await firestore()
-      .collection('SignupSteps')
-      .doc(props?.currentUser?.user_id)
-      .get()
-      .then(async res => {
-        const data = res?.data();
-       
-        let _data = data?.steps?.filter((c: any) => {
-          if (c?.step === 8 && c.isCompleted) {
-            return c.InterestedActivities;
-          }
-        });
-      
-
-        // setIds(
-        //   () => _data?.[0]?.InterestedActivities?.map((x: any) => x.id) ?? [],
-        // );
-
-        getExercises(
-          _data?.[0]?.InterestedActivities?.map((x: any) => x.id) ?? [],
-        );
-      });
-  };
-  useEffect(() => {
-    hi();
-  }, []);
-  const getExercises = async (ids: string[]) => {
-    setLoader(true);
-    await firestore()
-      .collection('Exercises')
-      // .where('activities', 'array-contains-any', ids)
-      .get()
-      .then(res => {
-        const data = res.docs.map(x => x.data());
-        setExercises(data as IExercises[]);
-      });
-    setLoader(false);
-  };
   const getCategories = async () => {
-    setLoader(true);
     await firestore()
       .collection('Categories')
       .limit(4)
       .get()
       .then(async res => {
-        const data =  res.docs.map(x => x.data());
+        const data = res.docs.map(x => x.data());
         setCategories(data as IExercises[]);
       })
       .catch(err => {
         console.log(err, 'on categories fetch error');
       });
-    setLoader(false);
+  };
+
+  const getNestedCollections = async () => {
+    let allCategories = await firestore().collection('Categories').get();
+    let _exercies = [...exercises];
+    Promise.all(
+      allCategories?.docs.map(x => {
+        firestore()
+          .collection(`Categories/${x?.data()?.id}/Exercises`)
+          .get()
+          .then(res => {
+            res.docs.map(x => {
+              _exercies.push(x.data());
+            });
+            setExercises(_exercies);
+          });
+      }),
+    );
   };
 
   useEffect(() => {
-    getCategories();
-  }, []);
+    Promise.all(
+      [getCategories, getNestedCollections].map(async x => {
+        setLoader(true);
+        await x();
+        setLoader(false);
+      }),
+    );
+  }, [props?.currentUser?.user_id]);
+
+  const refreshScreen = async (refresh: boolean) => {
+    Promise.all(
+      [getCategories, getNestedCollections].map(async x => {
+        setRefreshing(pre => !pre && refresh);
+        await x();
+        setRefreshing(false);
+        // console.log("hii");
+      }),
+    );
+    const refreshControl = refreshing;
+    Toast.showWithGravity(
+      refreshControl ? 'Refreshing...' : 'Refreshed',
+      Toast.SHORT,
+      Toast.TOP,
+    );
+  };
   return (
     <View style={styles.container}>
-       <StatusBar
-                    backgroundColor = "#673ab7"  
-                    barStyle = "light-content"   
-                    hidden = {false}    
-                    translucent = {true}  
-                />  
-      <Spinner
-        visible={loader}
-        textStyle={{color: Colors.WHITE}}
-        textContent={'Loading...'}
-        overlayColor={'#222332'}
-        customIndicator={<ActivityIndicator color={'#9662F1'} size="large" />}
+      <StatusBar
+        backgroundColor="#673ab7"
+        barStyle="light-content"
+        hidden={false}
+        translucent={true}
       />
-      {!loader && (
+      {loader ? (
+        <Spinner
+          visible={loader}
+          textStyle={{color: Colors.WHITE}}
+          textContent={'Loading...'}
+          overlayColor={'#222332'}
+          customIndicator={<ActivityIndicator color={'#9662F1'} size="large" />}
+        />
+      ) : (
         <>
           <View style={styles.header}>
             <Text style={styles.user}>
@@ -122,7 +125,16 @@ const Home = (props: IPropsUserInfo) => {
               </TouchableOpacity>
             </LinearGradient>
           </View>
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                colors={['#2D3450', 'white', 'black']}
+                tintColor={'white'}
+                refreshing={refreshing}
+                onRefresh={() => refreshScreen(true)}
+              />
+            }>
             <View style={styles.searchSection}>
               <Image
                 style={styles.searchIcon}
@@ -194,7 +206,11 @@ const Home = (props: IPropsUserInfo) => {
                     every muscle
                   </Text>
                   <View style={{marginTop: 10}}>
-                    <AppButton title="Start Training" width={200} />
+                    <AppButton
+                      title="Start Training"
+                      width={200}
+                      onPress={() => navigation.navigate('ViewAllCategory')}
+                    />
                   </View>
                 </View>
                 <Image
@@ -214,68 +230,47 @@ const Home = (props: IPropsUserInfo) => {
                 <Text style={styles.viewAll}>View All</Text>
               </TouchableOpacity>
             </View>
-            <View style={{paddingHorizontal: 2}}>
-              <ScrollView
-                showsHorizontalScrollIndicator={false}
-                horizontal
-                pagingEnabled={false}>
-                <View>
-                  <View style={styles.box}>
-                    <Image
-                      source={require('../../assets/images/Vector.png')}
-                      style={{height: 40, width: 60}}
-                    />
-                  </View>
-                  <View style={{paddingHorizontal: 5}}>
-                    <Text style={styles.titleText}>Rapid Lower Body</Text>
-                    <View style={styles.boxFooterText}>
-                      <Text style={{fontSize: 12, color: '#9662F1'}}>
-                        Beginner
-                      </Text>
-                      <Text style={styles.footerTextItem}>.</Text>
-                      <Text style={styles.footerTextItem}>42 min</Text>
+            <ScrollView
+              showsHorizontalScrollIndicator={false}
+              horizontal
+              pagingEnabled={false}>
+              <>
+                {exercises.map((x, index) => {
+                  return (
+                    <View style={{paddingHorizontal: 2}} key={index}>
+                      <TouchableOpacity
+                        style={styles.box}
+                        onPress={() => {
+                          navigation.navigate('WorkoutDetails', {
+                            id: x.id,
+                            data: x,
+                          });
+                        }}>
+                        <Image
+                          source={{uri: x.image === '' ? '' : x.image}}
+                          style={{
+                            height: 50,
+                            width: 50,
+                            resizeMode: 'contain',
+                          }}
+                        />
+                      </TouchableOpacity>
+                      <View style={{paddingHorizontal: 5}}>
+                        <Text style={styles.titleText}>{x.name}</Text>
+                        <View style={styles.boxFooterText}>
+                          <Text style={{fontSize: 12, color: '#9662F1'}}>
+                            Beginner
+                          </Text>
+                          <Text style={styles.footerTextItem}>.</Text>
+                          <Text style={styles.footerTextItem}>42 min</Text>
+                        </View>
+                      </View>
                     </View>
-                  </View>
-                </View>
-                <View>
-                  <View style={styles.box}>
-                    <Image
-                      source={require('../../assets/images/Vector.png')}
-                      style={{height: 40, width: 60}}
-                    />
-                  </View>
-                  <View style={{paddingHorizontal: 5}}>
-                    <Text style={styles.titleText}>Rapid Lower Body</Text>
-                    <View style={styles.boxFooterText}>
-                      <Text style={{fontSize: 12, color: '#9662F1'}}>
-                        Beginner
-                      </Text>
-                      <Text style={styles.footerTextItem}>.</Text>
-                      <Text style={styles.footerTextItem}>42 min</Text>
-                    </View>
-                  </View>
-                </View>
-                <View>
-                  <View style={styles.box}>
-                    <Image
-                      source={require('../../assets/images/Vector.png')}
-                      style={{height: 40, width: 60}}
-                    />
-                  </View>
-                  <View style={{paddingHorizontal: 5}}>
-                    <Text style={styles.titleText}>Rapid Lower Body</Text>
-                    <View style={styles.boxFooterText}>
-                      <Text style={{fontSize: 12, color: '#9662F1'}}>
-                        Beginner
-                      </Text>
-                      <Text style={styles.footerTextItem}>.</Text>
-                      <Text style={styles.footerTextItem}>42 min</Text>
-                    </View>
-                  </View>
-                </View>
-              </ScrollView>
-            </View>
-            <View style={styles.bodyHead}>
+                  );
+                })}
+              </>
+            </ScrollView>
+            {/* <View style={styles.bodyHead}>
               <View>
                 <Text style={styles.category}>Exercises</Text>
                 <Text style={{color: '#F1F4F8', fontSize: 12}}>
@@ -310,7 +305,7 @@ const Home = (props: IPropsUserInfo) => {
                   </View>
                 );
               })}
-            </View>
+            </View> */}
           </ScrollView>
         </>
       )}

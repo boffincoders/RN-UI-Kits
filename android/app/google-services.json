@@ -1,47 +1,56 @@
 {
-  "project_info": {
-    "project_number": "978186159501",
-    "firebase_url": "https://rn-fitness-admin-default-rtdb.firebaseio.com",
-    "project_id": "rn-fitness-admin",
-    "storage_bucket": "rn-fitness-admin.appspot.com"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:978186159501:android:47c2389a348c072185a9c4",
-        "android_client_info": {"package_name": "com.rnfitness"}
-      },
-      "oauth_client": [
-        {
-          "client_id": "978186159501-iiesammlgua20b661rs20k6qednd1kn4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.rnfitness",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+    "project_info": {
+      "project_number": "978186159501",
+      "firebase_url": "https://rn-fitness-admin-default-rtdb.firebaseio.com",
+      "project_id": "rn-fitness-admin",
+      "storage_bucket": "rn-fitness-admin.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:978186159501:android:47c2389a348c072185a9c4",
+          "android_client_info": {
+            "package_name": "com.rnfitness"
           }
         },
-        {
-          "client_id": "978186159501-f1r5qsrdsn421gehvt564uv1knf7a23j.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [{"current_key": "AIzaSyBPB2TIjvfNjy8HmG_OyN_eHi1QCmHAjuQ"}],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "978186159501-f1r5qsrdsn421gehvt564uv1knf7a23j.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "978186159501-8bqq02j9l95o2s4kbkj01mnji6um5p7p.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {"bundle_id": "rn-fitness-ios"}
+        "oauth_client": [
+          {
+            "client_id": "978186159501-iiesammlgua20b661rs20k6qednd1kn4.apps.googleusercontent.com",
+            "client_type": 1,
+            "android_info": {
+              "package_name": "com.rnfitness",
+              "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
             }
-          ]
+          },
+          {
+            "client_id": "978186159501-f1r5qsrdsn421gehvt564uv1knf7a23j.apps.googleusercontent.com",
+            "client_type": 3
+          }
+        ],
+        "api_key": [
+          {
+            "current_key": "AIzaSyBPB2TIjvfNjy8HmG_OyN_eHi1QCmHAjuQ"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": [
+              {
+                "client_id": "978186159501-f1r5qsrdsn421gehvt564uv1knf7a23j.apps.googleusercontent.com",
+                "client_type": 3
+              },
+              {
+                "client_id": "978186159501-8bqq02j9l95o2s4kbkj01mnji6um5p7p.apps.googleusercontent.com",
+                "client_type": 2,
+                "ios_info": {
+                  "bundle_id": "rn-fitness-ios"
+                }
+              }
+            ]
+          }
         }
       }
-    }
-  ],
-  "configuration_version": "1"
-}
+    ],
+    "configuration_version": "1"
+  }
+  

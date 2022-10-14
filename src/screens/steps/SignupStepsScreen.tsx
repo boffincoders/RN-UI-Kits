@@ -19,23 +19,20 @@ import {Colors} from '../../constants/Colors';
 import Step3 from './Step3';
 import Dashboard from '../dashboard';
 import {
-  ISignUpData,
   SignUpInitialValueContext,
 } from '../../contextAPI/UserSignupContext';
+import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 type SignupStepsScreen = {
-  steps: ISignUpSteps[];
-  loading: boolean;
-  setLoading: (value: boolean) => void;
+  user: FirebaseAuthTypes.User | null;
 };
 let userId: string = '';
 const SignupStepsScreen = (props: SignupStepsScreen) => {
   const {signUpdata, setSignUpdata} = useContext(SignUpInitialValueContext);
-
-  let {steps} = props;
-  const [step, setStep] = useState<number>(
-    steps.filter(x => !x.isCompleted)?.[0]?.step ?? 1,
-  );
+  const [loading, setLoading] = useState<boolean>(false);
+  let {user} = props;
+  const [step, setStep] = useState<number>(1);
   const [submitStepLoading, setSubmitStepLoading] = useState<boolean>(false);
+  const [currentUserSteps, setCurrentUserSteps] = useState<ISignUpSteps[]>([]);
   const [userSignUpData, setUserSignupData] = useState<ISignUpSteps>({
     step: 1,
     isCompleted: false,
@@ -54,14 +51,24 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
     ],
   });
   const navigation = useNavigation<any>();
-  const [sendUserStepsData, setSendUserStepsData] =
-    useState<ISignUpSteps[]>(steps);
-
   const getUserId = async () => {
     userId = await getStoredData('uid');
   };
+
+  const getSteps = async () => {
+    setLoading(true);
+    await firestore()
+      .collection('SignupSteps')
+      .doc(user?.uid)
+      .get()
+      .then(res => {
+        const userSteps: ISignUpSteps[] = res?.data()?.steps;
+        setStep(userSteps?.filter(x => !x.isCompleted)?.[0]?.step ?? 1);
+        setCurrentUserSteps(userSteps);
+      });
+    setLoading(false);
+  };
   const onInputChanges = async (data: ISignUpSteps) => {
-    console.log();
     let isValidated = false;
     let _signUpdata = signUpdata.filter(x => x.step === step)[0];
     switch (step) {
@@ -99,83 +106,82 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
             : false;
         break;
     }
-
     _signUpdata = {..._signUpdata, isValidate: isValidated};
     setSignUpdata(_signUpdata);
     setUserSignupData({...userSignUpData, ...data});
   };
   const getScreen = (step: number) => {
-    if (!props.loading)
-      switch (step) {
-        case 1:
-          return <Step1 onInputChanges={onInputChanges} />;
-        case 2:
-          return <Step2 onInputChanges={onInputChanges} />;
-        case 3:
-          return <Step3 onInputChanges={onInputChanges} />;
-        case 4:
-          return <Step4 onInputChanges={onInputChanges} />;
-        case 5:
-          return <Step5 onInputChanges={onInputChanges} />;
-        case 6:
-          return <Step6 onInputChanges={onInputChanges} />;
-        case 7:
-          return <Step7 onInputChanges={onInputChanges} />;
-        case 8:
-          return <Step8 onInputChanges={onInputChanges} />;
-        default:
-        // return navigation.navigate('Dashboard');
-      }
+    switch (step) {
+      case 1:
+        return <Step1 onInputChanges={onInputChanges} />;
+      case 2:
+        return <Step2 onInputChanges={onInputChanges} />;
+      case 3:
+        return <Step3 onInputChanges={onInputChanges} />;
+      case 4:
+        return <Step4 onInputChanges={onInputChanges} />;
+      case 5:
+        return <Step5 onInputChanges={onInputChanges} />;
+      case 6:
+        return <Step6 onInputChanges={onInputChanges} />;
+      case 7:
+        return <Step7 onInputChanges={onInputChanges} />;
+      case 8:
+        return <Step8 onInputChanges={onInputChanges} />;
+      default:
+      // return navigation.navigate('Dashboard');
+    }
   };
   useEffect(() => {
+    getSteps();
     getUserId();
   }, []);
 
   const onContinue = async () => {
     setSubmitStepLoading(true);
     if (step === 1) {
-      let newState = [...sendUserStepsData];
+      let newState = [...currentUserSteps];
       newState[0].gender = userSignUpData?.gender;
       newState[0].isCompleted = true;
       newState[0].step = step;
     } else if (step === 2) {
-      let newState = [...sendUserStepsData];
+      let newState = [...currentUserSteps];
       newState[1].mainGoal = userSignUpData?.mainGoal;
       newState[1].isCompleted = true;
       newState[1].step = step;
     } else if (step === 3) {
-      let newState = [...sendUserStepsData];
+      let newState = [...currentUserSteps];
       newState[2].birthDate = userSignUpData?.birthDate;
       newState[2].isCompleted = true;
       newState[2].step = step;
     } else if (step === 4) {
-      let newState = [...sendUserStepsData];
+      let newState = [...currentUserSteps];
       newState[3].height = userSignUpData?.height;
       newState[3].isCompleted = true;
       newState[3].step = step;
     } else if (step === 5) {
-      let newState = [...sendUserStepsData];
+      let newState = [...currentUserSteps];
       newState[4].weight = userSignUpData?.weight;
       newState[4].isCompleted = true;
       newState[4].step = step;
     } else if (step === 6) {
-      let newState = [...sendUserStepsData];
+      let newState = [...currentUserSteps];
       newState[5].goalWeight = userSignUpData?.goalWeight;
       newState[5].isCompleted = true;
       newState[5].step = step;
     } else if (step === 7) {
-      let newState = [...sendUserStepsData];
+      let newState = [...currentUserSteps];
       newState[6].trainingLevel = userSignUpData?.trainingLevel;
       newState[6].isCompleted = true;
       newState[6].step = step;
     } else if (step === 8) {
-      let newState = [...sendUserStepsData];
+      let newState = [...currentUserSteps];
       newState[7].InterestedActivities = userSignUpData?.InterestedActivities;
       newState[7].isCompleted = true;
       newState[7].step = step;
     }
 
-    await getSignUpUpdatedData(sendUserStepsData);
+    await getSignUpUpdatedData(currentUserSteps);
     setSubmitStepLoading(false);
   };
 
@@ -200,29 +206,29 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
   return (
     <View style={styles.container}>
       <Spinner
-        visible={props.loading || submitStepLoading}
+        visible={loading || submitStepLoading}
         textStyle={{color: Colors.WHITE}}
         textContent={'Loading...'}
         overlayColor={'#222332'}
         customIndicator={<ActivityIndicator color={'#9662F1'} size="large" />}
       />
 
-      {!props.loading && (
+      {!loading && (
         <>
-          {steps.some(x => !x.isCompleted) ? (
+          {currentUserSteps.some(x => !x.isCompleted) ? (
             <StepHeader
               step={step}
               setStep={setStep}
               currentUserId={userId}
-              steps={steps}
+              steps={currentUserSteps}
             />
           ) : null}
-          {steps.some(x => !x.isCompleted) ? (
+          {!loading && currentUserSteps.some(x => !x.isCompleted) ? (
             (() => {
               switch (step) {
                 case step: {
                   return _.compact(
-                    steps.map(_step => {
+                    currentUserSteps.map(_step => {
                       if (!_step?.isCompleted) return getScreen(step);
                     }),
                   )?.[0];
@@ -235,7 +241,7 @@ const SignupStepsScreen = (props: SignupStepsScreen) => {
             <Dashboard />
           )}
 
-          {steps.some(x => !x.isCompleted) ? (
+          {currentUserSteps.some(x => !x.isCompleted) ? (
             signUpdata.find(
               element => element.step === step && element.isValidate,
             ) ? (

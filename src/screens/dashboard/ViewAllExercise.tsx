@@ -47,6 +47,7 @@ const ViewAllExercise = () => {
     'Medium',
     'Beginner',
   ]);
+  
   return (
     <View style={styles.container}>
       {loader && (
@@ -55,110 +56,112 @@ const ViewAllExercise = () => {
           textStyle={{color: Colors.WHITE}}
           textContent={'Loading...'}
           overlayColor={'#222332'}
-          customIndicator={<ActivityIndicator color={'#9662F1'} size="large"/>}
+          customIndicator={<ActivityIndicator color={'#9662F1'} size="large" />}
         />
       )}
-      {!loader && (
-        <>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack(null)}>
-              <Image source={require('../../assets/images/backButton.png')} />
-            </TouchableOpacity>
+      {!loader &&
+        (exercises.length > 0 ? (
+          <>
+            <View style={styles.header}>
+              <TouchableOpacity onPress={() => navigation.goBack(null)}>
+                <Image source={require('../../assets/images/backButton.png')} />
+              </TouchableOpacity>
 
-            <View>
-              <Text style={{color: Colors.WHITE}}>Exercises</Text>
+              <View>
+                <Text style={{color: Colors.WHITE}}>Exercises</Text>
+              </View>
+              <View></View>
             </View>
-            <View></View>
-          </View>
-          <View style={styles.searchSection}>
-            <Image
-              style={styles.searchIcon}
-              source={require('../../assets/images/search.png')}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Search something"
-              autoFocus={false}
-              placeholderTextColor={Colors.WHITE}
-             
-            />
-          </View>
-          <View style={{marginTop: 5}}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {tags.map((x, index) => {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => setSelectedTag(index)}>
-                    <LinearGradient
-                      style={styles.tags}
-                      start={{x: 1, y: 1}}
-                      end={{x: 1, y: 0}}
-                      colors={
-                        selectedTag === index
-                          ? ['#332B8A', '#905DE9']
-                          : ['#2D3450', '#2D3450', '#2D3450']
-                      }>
-                      <Text style={styles.tagText}>{x}</Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </View>
-          <View style={{flex: 1}}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              refreshControl={
-                <RefreshControl
-                  tintColor={Colors.WHITE}
-                  refreshing={refreshingList}
-                  onRefresh={getExercises}
-                />
-              }>
-              {exercises.map((x, index) => {
-                return (
-                  <TouchableOpacity key={index} style={styles.list}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}>
+            <View style={styles.searchSection}>
+              <Image
+                style={styles.searchIcon}
+                source={require('../../assets/images/search.png')}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Search something"
+                autoFocus={false}
+                placeholderTextColor={Colors.WHITE}
+              />
+            </View>
+            <View style={{marginTop: 5}}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {tags.map((x, index) => {
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => setSelectedTag(index)}>
+                      <LinearGradient
+                        style={styles.tags}
+                        start={{x: 1, y: 1}}
+                        end={{x: 1, y: 0}}
+                        colors={
+                          selectedTag === index
+                            ? ['#332B8A', '#905DE9']
+                            : ['#2D3450', '#2D3450', '#2D3450']
+                        }>
+                        <Text style={styles.tagText}>{x}</Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </View>
+            <View style={{flex: 1}}>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                  <RefreshControl
+                    tintColor={Colors.WHITE}
+                    refreshing={refreshingList}
+                    onRefresh={getExercises}
+                  />
+                }>
+                {exercises.map((x, index) => {
+                  return (
+                    <TouchableOpacity key={index} style={styles.list}>
                       <View
                         style={{
                           flexDirection: 'row',
-                          justifyContent: 'center',
+                          justifyContent: 'space-between',
                           alignItems: 'center',
                         }}>
-                        <LinearGradient
-                          start={{x: 1, y: 1}}
-                          end={{x: 1, y: 0}}
-                          colors={['#CAD0D8', '#CAD0D8']}
-                          style={styles.iconContainer}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          <LinearGradient
+                            start={{x: 1, y: 1}}
+                            end={{x: 1, y: 0}}
+                            colors={['#CAD0D8', '#CAD0D8']}
+                            style={styles.iconContainer}>
+                            <Image
+                              style={{height: 30, width: 43}}
+                              source={{uri: x.image}}
+                            />
+                          </LinearGradient>
+                          <View style={{marginLeft: 10}}>
+                            <Text style={styles.titleText}>{x.name}</Text>
+                            <Text style={styles.secondaryText}>2 workouts</Text>
+                          </View>
+                        </View>
+                        <View>
                           <Image
-                            style={{height: 30, width: 43}}
-                            source={{uri: x.image}}
+                            source={require('../../assets/images/warning.png')}
                           />
-                        </LinearGradient>
-                        <View style={{marginLeft: 10}}>
-                          <Text style={styles.titleText}>{x.name}</Text>
-                          <Text style={styles.secondaryText}>2 workouts</Text>
                         </View>
                       </View>
-                      <View>
-                        <Image
-                          source={require('../../assets/images/warning.png')}
-                        />
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </View>
-        </>
-      )}
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </View>
+          </>
+        ) : (
+          <Text>No exercise found</Text>
+        ))}
     </View>
   );
 };

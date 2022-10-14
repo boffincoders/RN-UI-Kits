@@ -81,8 +81,6 @@ const SignIn = () => {
             await auth()
               .signInWithEmailAndPassword(values.email, values.password)
               .then(async res => {
-                console.log(res , "res");
-                
                 const getUser = allUsers.filter(x => x.email === values.email);
                 await storeData('uid', res.user.uid);
                 await storeData('currentUser', getUser[0]);
