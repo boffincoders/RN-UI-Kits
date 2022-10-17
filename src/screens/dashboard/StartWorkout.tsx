@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     fontSize: 27,
     fontWeight: '700',
     color: Colors.WHITE,
+    fontFamily : "Poppins-Regular"
   },
   imageBox: {
     justifyContent: 'center',

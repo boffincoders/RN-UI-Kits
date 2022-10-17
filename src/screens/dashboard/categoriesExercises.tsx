@@ -65,7 +65,7 @@ const CategoriesExercises = ({route, navigation}: any) => {
     <View style={styles.container}>
       <Spinner
         visible={loader}
-        textStyle={{color: Colors.WHITE}}
+        textStyle={{color: Colors.WHITE , fontFamily : "Poppins-Regular"}}
         textContent={'Loading...'}
         overlayColor={'#222332'}
         customIndicator={<ActivityIndicator color={'#9662F1'} size="large" />}
@@ -75,7 +75,7 @@ const CategoriesExercises = ({route, navigation}: any) => {
           <Image source={require('../../assets/images/backButton.png')} />
         </TouchableOpacity>
         <View>
-          <Text style={{color: Colors.WHITE}}>Exercises</Text>
+          <Text style={{color: Colors.WHITE ,fontFamily : "Poppins-Bold"}}>Exercises</Text>
         </View>
         <View></View>
       </View>
@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     color: Colors.WHITE,
     backgroundColor: '#2D3450',
+    fontFamily : "Poppins-Regular"
   },
   iconContainer: {
     width: '10%',
@@ -197,10 +198,12 @@ const styles = StyleSheet.create({
     color: Colors.WHITE,
     fontSize: 16,
     fontWeight: '500',
+    fontFamily : "Poppins-Bold"
   },
   secondaryText: {
     fontSize: 14,
     color: '#F1F4F8',
+    fontFamily : "Poppins-Regular"
   },
   list: {
     flex: 1,
@@ -218,6 +221,7 @@ const styles = StyleSheet.create({
     paddingRight: 7,
     paddingBottom: 7,
     paddingLeft: 0,
+    fontFamily : "Poppins-Regular",
     margin: 5,
     fontSize: 14,
     backgroundColor: '#2D3450',
@@ -235,6 +239,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  noDataText: {color: 'white', textAlign: 'center', fontSize: 20},
+  noDataText: {color: 'white', textAlign: 'center', fontSize: 20 ,fontFamily : "Poppins-Regular"},
 });
 export default CategoriesExercises;

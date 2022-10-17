@@ -61,7 +61,7 @@ const Step7 = ({onInputChanges}: IPropsSteps) => {
                     {x.title}
                   </Text>
                   <Text
-                    style={{color: Colors.WHITE, marginLeft: 5, fontSize: 14}}>
+                    style={{color: Colors.WHITE, marginLeft: 5, fontSize: 14, fontFamily : "Poppins-Regular"}}>
                     {x.des}
                   </Text>
                 </LinearGradient>
@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '700',
     marginBottom: 10,
+    fontFamily : "Poppins-Regular"
   },
 
   listItem: {

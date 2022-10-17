@@ -57,7 +57,7 @@ const ViewAllCategory = () => {
               <Image source={require('../../assets/images/backButton.png')} />
             </TouchableOpacity>
             <View>
-              <Text style={{color: Colors.WHITE}}>Category</Text>
+              <Text style={{color: Colors.WHITE , fontFamily : "Poppins-Bold"}}>Category</Text>
             </View>
             <View></View>
           </View>
@@ -173,10 +173,12 @@ const styles = StyleSheet.create({
     color: Colors.WHITE,
     fontSize: 16,
     fontWeight: '500',
+    fontFamily : "Poppins-Regular"
   },
   secondaryText: {
     fontSize: 14,
     color: '#F1F4F8',
+    fontFamily : "Poppins-Regular"
   },
   list: {
     flex: 1,
@@ -198,6 +200,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     backgroundColor: '#2D3450',
     color: Colors.WHITE,
+    fontFamily : "Poppins-Regular"
   },
   header: {
     flexDirection: 'row',

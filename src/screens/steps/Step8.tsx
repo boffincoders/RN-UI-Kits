@@ -95,6 +95,7 @@ const Step8 = ({onInputChanges}: IPropsSteps) => {
                           color: Colors.WHITE,
                           marginLeft: 5,
                           fontSize: 16,
+                          fontFamily : "Poppins-Regular"
                         }}>
                         {item.name}
                       </Text>
@@ -145,6 +146,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '700',
     marginBottom: 10,
+    fontFamily : "Poppins-Regular"
   },
   listContainer: {
     marginTop: 60,

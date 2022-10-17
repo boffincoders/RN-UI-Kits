@@ -19,7 +19,7 @@ const AppButton = ({title, onPress, width}: IButtonProps) => {
         end={{y: 0.0, x: 2}}
         colors={['#9662F1', '#9662F1', '#9662F1', '#FFFFFF', '#9662F1']}
         style={[styles.container, {width: width}]}>
-        <Text style={{color: 'white'}}>{title}</Text>
+        <Text style={{color: 'white' , fontFamily : "Poppins-Bold"}}>{title}</Text>
       </LinearGradient>
     </TouchableOpacity>
   );

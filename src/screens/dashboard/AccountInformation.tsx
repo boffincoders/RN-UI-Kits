@@ -188,9 +188,9 @@ const AccountInformation = ({route}: any) => {
           <View>
             <View style={styles.account}>
               <View style={styles.row}>
-                <Text style={{color: Colors.WHITE, fontSize: 16}}>Name</Text>
+                <Text style={{color: Colors.WHITE, fontSize: 16,fontFamily : "Poppins-Regular"}}>Name</Text>
                 <View style={styles.secondaryRow}>
-                  <Text style={{color: Colors.WHITE, fontSize: 14}}>
+                  <Text style={{color: Colors.WHITE, fontSize: 14,fontFamily : "Poppins-Regular"}}>
                     {currentUser?.fullName}
                   </Text>
                   <TouchableOpacity
@@ -207,12 +207,12 @@ const AccountInformation = ({route}: any) => {
               </View>
               <View style={styles.borderListBottom}></View>
               <View style={styles.row}>
-                <Text style={{color: Colors.WHITE, fontSize: 16}}>Weight</Text>
+                <Text style={{color: Colors.WHITE, fontSize: 16 ,fontFamily : "Poppins-Regular"}}>Weight</Text>
                 <View style={styles.secondaryRow}>
                   {steps?.map((x, index) => {
                     return (
                       <Text
-                        style={{color: Colors.WHITE, fontSize: 14}}
+                        style={{color: Colors.WHITE, fontSize: 14 , fontFamily : "Poppins-Regular"}}
                         key={index}>
                         {x.weight}
                       </Text>
@@ -240,12 +240,12 @@ const AccountInformation = ({route}: any) => {
                   {borderBottomWidth: 0.5},
                 ]}></View>
               <View style={styles.row}>
-                <Text style={{color: Colors.WHITE, fontSize: 16}}>Height</Text>
+                <Text style={{color: Colors.WHITE, fontSize: 16 , fontFamily : "Poppins-Regular"}}>Height</Text>
                 <View style={styles.secondaryRow}>
                   {steps?.map((x, index) => {
                     return (
                       <Text
-                        style={{color: Colors.WHITE, fontSize: 14}}
+                        style={{color: Colors.WHITE, fontSize: 14 ,fontFamily : "Poppins-Regular"}}
                         key={index}>
                         {x.height}
                       </Text>
@@ -269,14 +269,14 @@ const AccountInformation = ({route}: any) => {
               </View>
               <View style={styles.borderListBottom}></View>
               <View style={styles.row}>
-                <Text style={{color: Colors.WHITE, fontSize: 16}}>
+                <Text style={{color: Colors.WHITE, fontSize: 16 , fontFamily : "Poppins-Regular"}}>
                   Date of Birth
                 </Text>
                 <View style={styles.secondaryRow}>
                   {steps?.map((x, index) => {
                     return (
                       <Text
-                        style={{color: Colors.WHITE, fontSize: 14}}
+                        style={{color: Colors.WHITE, fontSize: 14 ,fontFamily : "Poppins-Regular"}}
                         key={index}>
                         {x?.birthDate}
                       </Text>
@@ -303,9 +303,9 @@ const AccountInformation = ({route}: any) => {
                   {borderBottomWidth: 0.5},
                 ]}></View>
               <View style={styles.row}>
-                <Text style={{color: Colors.WHITE, fontSize: 16}}>Email</Text>
+                <Text style={{color: Colors.WHITE, fontSize: 16 ,fontFamily : "Poppins-Regular"}}>Email</Text>
                 <View style={styles.secondaryRow}>
-                  <Text style={{color: Colors.WHITE, fontSize: 14}}>
+                  <Text style={{color: Colors.WHITE, fontSize: 14 ,fontFamily : "Poppins-Regular"}}>
                     {currentUser?.email}
                   </Text>
                   <TouchableOpacity
@@ -322,7 +322,7 @@ const AccountInformation = ({route}: any) => {
               </View>
             </View>
             <View style={[styles.account, {marginTop: 20}]}>
-              <Text style={{color: 'white', fontSize: 20}}>
+              <Text style={{color: 'white', fontSize: 20 , fontFamily : "Poppins-Regular"}}>
                 BMI Calculations
               </Text>
               <View
@@ -361,12 +361,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
   },
-  saveButton: {color: '#9662F1', fontSize: 17},
+  saveButton: {color: '#9662F1', fontSize: 17 ,fontFamily : "Poppins-Regular"},
 
   headerTitle: {
     fontSize: 16,
     color: Colors.WHITE,
     fontWeight: '400',
+
+    fontFamily : "Poppins-Bold"
   },
   circleImage: {
     backgroundColor: '#D8D8D8',
@@ -409,6 +411,7 @@ const styles = StyleSheet.create({
   bmiFonts: {
     fontWeight: '600',
     fontSize: 16,
+    fontFamily : "Poppins-Regular"
   },
 });
 export default AccountInformation;

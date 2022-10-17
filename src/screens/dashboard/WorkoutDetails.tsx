@@ -16,32 +16,29 @@ import {Colors} from '../../constants/Colors';
 import {ICategoriesExercises} from './categoriesExercises';
 import Spinner from 'react-native-loading-spinner-overlay/lib';
 const WorkoutDetails = ({route, navigation}: any) => {
-  const {id, categoryId,data} = route?.params;
+  const {id, categoryId, data} = route?.params;
   const [loader, setLoader] = useState<boolean>(false);
   const [exercise, setExercise] = useState<ICategoriesExercises>();
   const [scrollY] = useState(new Animated.Value(0));
   const getWorkout = async () => {
     setLoader(true);
-    if(categoryId){
+    if (categoryId) {
       await firestore()
         .collection(`Categories/${categoryId}/Exercises`)
         .doc(id)
         .get()
         .then(res => {
-          categoryId
+          categoryId;
           setExercise(res?.data() as ICategoriesExercises);
         });
-    }else {
-      setExercise(data)
+    } else {
+      setExercise(data);
     }
     setLoader(false);
   };
   useEffect(() => {
     getWorkout();
   }, [id || categoryId]);
-
-  console.log(exercise ,'data');
-  
 
   return (
     <>
@@ -123,7 +120,12 @@ const WorkoutDetails = ({route, navigation}: any) => {
                     style={styles.profileItems}>
                     <Image source={require('../../assets/images/time.png')} />
                     <Text
-                      style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
+                      style={{
+                        color: Colors.WHITE,
+                        fontSize: 14,
+                        marginTop: 8,
+                        fontFamily: 'Poppins-Regular',
+                      }}>
                       30 min
                     </Text>
                   </LinearGradient>
@@ -134,7 +136,12 @@ const WorkoutDetails = ({route, navigation}: any) => {
                     style={styles.profileItems}>
                     <Image source={require('../../assets/images/fire.png')} />
                     <Text
-                      style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
+                      style={{
+                        color: Colors.WHITE,
+                        fontSize: 14,
+                        marginTop: 8,
+                        fontFamily: 'Poppins-Regular',
+                      }}>
                       340 kal
                     </Text>
                   </LinearGradient>
@@ -146,7 +153,12 @@ const WorkoutDetails = ({route, navigation}: any) => {
                     style={styles.profileItems}>
                     <Image source={require('../../assets/images/cake.png')} />
                     <Text
-                      style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
+                      style={{
+                        color: Colors.WHITE,
+                        fontSize: 14,
+                        marginTop: 8,
+                        fontFamily: 'Poppins-Regular',
+                      }}>
                       26 Years
                     </Text>
                   </LinearGradient>
@@ -358,6 +370,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: Colors.WHITE,
     paddingHorizontal: 10,
+    fontFamily: 'Poppins-Regular',
   },
   scrollContainer: {
     padding: 16,
@@ -368,6 +381,7 @@ const styles = StyleSheet.create({
     color: Colors.WHITE,
     marginTop: 3,
     paddingHorizontal: 10,
+    fontFamily: 'Poppins-Regular',
   },
   profileItems: {
     paddingVertical: 15,
@@ -392,10 +406,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
   },
-  equip: {fontSize: 20, color: Colors.WHITE, fontWeight: '400'},
+  equip: {
+    fontSize: 20,
+    color: Colors.WHITE,
+    fontWeight: '400',
+    fontFamily: 'Poppins-Regular',
+  },
   items: {
     fontSize: 14,
     color: '#F1F4F8',
+    fontFamily: 'Poppins-Regular',
   },
   borderBoxes: {
     borderWidth: 1,

@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
   step: {
     color: '#9662F1',
     fontSize: 16,
+    fontFamily : "Poppins-Regular"
   },
 });
 

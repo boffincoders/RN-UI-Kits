@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
   tagText: {
     color: Colors.WHITE,
     fontSize: 12,
+    fontFamily : "Poppins-Regular"
   },
   searchSection: {
     flexDirection: 'row',

@@ -103,13 +103,13 @@ const EditProfile = ({route}: IEditProfileProps) => {
           enableReinitialize
           onSubmit={async (values, {resetForm}) => {
             setUpdating(true);
+            const currentUser = await getStoredData('currentUser');
             const updatedWeight = `${values.weight} ${
               selectedWeightType === 0 ? 'Kg' : 'Lb'
             }`;
             const updateHeight = `${values.height} ${
               selectedWeightType === 0 ? 'feet' : 'centimeter'
             }`;
-            const currentUser = await getStoredData('currentUser');
             await storeData('currentUser', {
               ...currentUser,
               email: values.email ? values.email : currentUser?.email,
@@ -190,6 +190,7 @@ const EditProfile = ({route}: IEditProfileProps) => {
                     value={values.name}
                     style={styles.inputContainer}
                     placeholderTextColor={'white'}
+                  
                     autoCapitalize="none"
                   />
                 </View>
@@ -210,7 +211,7 @@ const EditProfile = ({route}: IEditProfileProps) => {
                                 : ['#2D3450', '#2D3450']
                             }
                             style={styles.selectedHeightStyle}>
-                            <Text style={{color: Colors.WHITE}}>{x.name}</Text>
+                            <Text style={{color: Colors.WHITE , fontFamily : "Poppins-Regular"}}>{x.name}</Text>
                           </LinearGradient>
                         </TouchableOpacity>
                       );
@@ -225,6 +226,7 @@ const EditProfile = ({route}: IEditProfileProps) => {
                     <TextInput
                       style={{
                         backgroundColor: '#2D3450',
+                        fontFamily : "Poppins-Regular",
                         width: 100,
                         paddingVertical: 20,
                         fontSize: 25,
@@ -241,6 +243,7 @@ const EditProfile = ({route}: IEditProfileProps) => {
                     />
                     <Text
                       style={{
+                        fontFamily : "Poppins-Regular",
                         color: Colors.WHITE,
                         marginLeft: 10,
                         marginTop: 10,
@@ -267,7 +270,7 @@ const EditProfile = ({route}: IEditProfileProps) => {
                                 : ['#2D3450', '#2D3450']
                             }
                             style={styles.selectedHeightStyle}>
-                            <Text style={{color: Colors.WHITE}}>{x.name}</Text>
+                            <Text style={{color: Colors.WHITE , fontFamily : "Poppins-Regular"}}>{x.name}</Text>
                           </LinearGradient>
                         </TouchableOpacity>
                       );
@@ -308,23 +311,28 @@ const EditProfile = ({route}: IEditProfileProps) => {
                   </View>
                 </View>
               ) : dateOfBirth ? (
-                <DatePicker
-                  onDateChange={date => {
-                    setFieldValue('dateOfBirth', date);
-                  }}
-                  selectorStartingYear={1990}
-                  options={{
-                    textDefaultColor: '#332B8A',
-                    selectedTextColor: Colors.WHITE,
-                    mainColor: '#905DE9',
-                    textSecondaryColor: '#332B8A',
-                    borderColor: 'rgba(122, 146, 165, 0.1)',
-                  }}
-                  selected={values?.dateOfBirth}
-                  mode="calendar"
-                  minuteInterval={30}
-                  style={{borderRadius: 10, marginLeft: 10, marginRight: 10}}
-                />
+                  <DatePicker
+                    onDateChange={date => {
+                      setFieldValue('dateOfBirth', date);
+                    }}
+                    selectorStartingYear={1990}
+                    options={{
+                      backgroundColor: '#222332',
+                      textHeaderColor: 'white',
+                      textDefaultColor: 'white',
+                      selectedTextColor: 'white',
+                      mainColor: '#905DE9',
+                      textSecondaryColor: 'white',
+                      borderColor: 'rgba(122, 146, 165, 0.1)',
+                    }}
+                    
+                    selected={values?.dateOfBirth}
+                    mode="calendar"
+                    minuteInterval={30}
+                    style={{margin : 10}}
+                  />
+
+               
               ) : (
                 <></>
               )}
@@ -354,6 +362,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.WHITE,
     fontWeight: '400',
+    fontFamily : "Poppins-Bold"
   },
   account: {
     flex: 1,
@@ -367,12 +376,14 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 45,
     marginBottom: 20,
+    fontFamily : "Poppins-Regular"
   },
   inputContainer: {
     height: 50,
     padding: 10,
     width: '100%',
     color: 'white',
+    fontFamily : "Poppins-Regular"
   },
   heightContainer: {
     width: 250,
@@ -395,6 +406,7 @@ const styles = StyleSheet.create({
     color: Colors.WHITE,
     fontWeight: '700',
     marginBottom: 10,
+    fontFamily : "Poppins-Regular"
   },
   listContainer: {
     marginTop: 60,

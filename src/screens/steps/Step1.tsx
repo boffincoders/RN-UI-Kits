@@ -1,9 +1,7 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import firestore from '@react-native-firebase/firestore'
 import {Colors} from '../../constants/Colors';
-import {SignUpInitialValueContext} from '../../contextAPI/UserSignupContext';
 import {ISignUpSteps} from '../auth/SignIn';
 let gender = [
   {
@@ -54,7 +52,7 @@ const Step1 = ({onInputChanges}: IPropsSteps) => {
                     <Image source={x.icon} />
                   </LinearGradient>
                   <Text
-                    style={{color: Colors.WHITE, marginLeft: 5, fontSize: 16}}>
+                    style={{color: Colors.WHITE, marginLeft: 5, fontSize: 16 ,  fontFamily : "Poppins-Regular"}}>
                     {x.name}
                   </Text>
                 </View>
@@ -82,6 +80,7 @@ const styles = StyleSheet.create({
   step: {
     color: '#9662F1',
     fontSize: 16,
+    fontFamily : "Poppins-Regular"
   },
   gender: {
     fontSize: 27,
@@ -89,10 +88,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '700',
     marginBottom: 10,
+    fontFamily : "Poppins-Regular"
   },
   listContainer: {
     marginTop: 60,
     paddingHorizontal: 10,
+    fontFamily : "Poppins-Regular"
   },
 
   listItem: {

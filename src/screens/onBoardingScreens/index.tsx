@@ -109,7 +109,7 @@ const OnBoardingScreens = () => {
           <View style={styles.footer}>
             <Text style={{color: '#F1F4F8'}}>Already have account?</Text>
             <TouchableOpacity onPress={() =>navigation.navigate("SignIn")}>
-              <Text style={{color: '#9662F1'}}>Sign in</Text>
+              <Text style={{color: '#9662F1'}}> Sign in</Text>
             </TouchableOpacity>
           </View>
         ) : null}
@@ -137,10 +137,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   titleFont: {
+    fontFamily: "Poppins-Bold",
     color: Colors.WHITE,
     fontSize: 25,
   },
   description: {
+    fontFamily: "Poppins-Regular",
     color: Colors.WHITE,
     fontSize: 14,
   },

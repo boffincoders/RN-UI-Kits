@@ -38,7 +38,7 @@ const Step5 = ({onInputChanges}: IPropsSteps) => {
                       : ['#2D3450', '#2D3450']
                   }
                   style={styles.selectedHeightStyle}>
-                  <Text style={{color: Colors.WHITE}}>{x.name}</Text>
+                  <Text style={{color: Colors.WHITE , fontFamily : "Poppins-Regular"}}>{x.name}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             );
@@ -66,6 +66,7 @@ const Step5 = ({onInputChanges}: IPropsSteps) => {
               marginLeft: 10,
               marginTop: 10,
               fontSize: 16,
+              fontFamily : "Poppins-Regular"
             }}>
             {selectedWeightType === 0 ? 'Lb' : 'Kg'}
           </Text>
@@ -97,6 +98,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '700',
     marginBottom: 10,
+    fontFamily : "Poppins-Regular"
   },
   listContainer: {
     marginTop: 60,
@@ -154,6 +156,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 30,
     color: Colors.WHITE,
+    fontFamily : "Poppins-Regular",
     fontWeight: 'bold',
   },
 });

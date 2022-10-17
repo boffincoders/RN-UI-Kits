@@ -179,7 +179,7 @@ const Home = (props: IPropsUserInfo) => {
                           style={{height: 40, width: 50}}
                           resizeMode="contain"
                         />
-                        <Text style={{color: Colors.WHITE, fontSize: 14}}>
+                        <Text style={{color: Colors.WHITE, fontSize: 14 ,fontFamily : "Poppins-Regular"}}>
                           {x.name}
                         </Text>
                       </LinearGradient>
@@ -193,16 +193,16 @@ const Home = (props: IPropsUserInfo) => {
                 colors={['#332B8A', '#905DE9']}
                 style={styles.toning}>
                 <View>
-                  <Text style={{fontSize: 20, color: Colors.WHITE}}>
+                  <Text style={{fontSize: 20, color: Colors.WHITE ,fontFamily : "Poppins-Regular"}}>
                     Full Body Toning
                   </Text>
-                  <Text style={{fontSize: 20, color: Colors.WHITE}}>
+                  <Text style={{fontSize: 20, color: Colors.WHITE ,fontFamily : "Poppins-Regular"}}>
                     Workout
                   </Text>
-                  <Text style={{color: '#F1F4F8', fontSize: 14, marginTop: 10}}>
+                  <Text style={{color: '#F1F4F8', fontSize: 14, marginTop: 10 ,fontFamily : "Poppins-Regular"}}>
                     Includes circuits to work
                   </Text>
-                  <Text style={{color: '#F1F4F8', fontSize: 14}}>
+                  <Text style={{color: '#F1F4F8', fontSize: 14 ,fontFamily : "Poppins-Regular"}}>
                     every muscle
                   </Text>
                   <View style={{marginTop: 10}}>
@@ -215,14 +215,14 @@ const Home = (props: IPropsUserInfo) => {
                 </View>
                 <Image
                   source={require('../../assets/images/Vector.png')}
-                  style={{height: 70, width: 100}}
+                  style={{height: 70, width: 100, resizeMode: 'contain'}}
                 />
               </LinearGradient>
             </View>
             <View style={styles.bodyHead}>
               <View>
                 <Text style={styles.category}>Popular workouts</Text>
-                <Text style={{color: '#F1F4F8', fontSize: 12}}>
+                <Text style={{color: '#F1F4F8', fontSize: 12 ,fontFamily : "Poppins-Regular"}}>
                   Workouts:80
                 </Text>
               </View>
@@ -237,9 +237,10 @@ const Home = (props: IPropsUserInfo) => {
               <>
                 {exercises.map((x, index) => {
                   return (
-                    <View style={{paddingHorizontal: 2}} key={index}>
+                    <View
+                      style={{paddingHorizontal: 2, paddingVertical: 5}}
+                      key={index}>
                       <TouchableOpacity
-                        style={styles.box}
                         onPress={() => {
                           navigation.navigate('WorkoutDetails', {
                             id: x.id,
@@ -247,12 +248,12 @@ const Home = (props: IPropsUserInfo) => {
                           });
                         }}>
                         <Image
-                          source={{uri: x.image === '' ? '' : x.image}}
-                          style={{
-                            height: 50,
-                            width: 50,
-                            resizeMode: 'contain',
-                          }}
+                          style={styles.box}
+                          source={
+                            x.image === ''
+                              ? require('../../assets/images/Vector.png')
+                              : {uri: x.image}
+                          }
                         />
                       </TouchableOpacity>
                       <View style={{paddingHorizontal: 5}}>
@@ -322,6 +323,7 @@ const styles = StyleSheet.create({
     color: Colors.WHITE,
     fontWeight: '500',
     marginLeft: 10,
+    fontFamily : "Poppins-Bold"
   },
   iconContainer: {
     paddingVertical: 8,
@@ -347,6 +349,7 @@ const styles = StyleSheet.create({
     marginRight: 7,
     alignItems: 'center',
     paddingHorizontal: 8,
+    fontFamily : "Poppins-Regular",
     borderRadius: 8,
     color: Colors.WHITE,
     backgroundColor: '#2D3450',
@@ -363,6 +366,7 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
     margin: 5,
     fontSize: 14,
+    fontFamily : "Poppins-Regular",
     backgroundColor: '#2D3450',
     color: Colors.WHITE,
   },
@@ -376,11 +380,13 @@ const styles = StyleSheet.create({
   viewAll: {
     color: Colors.WHITE,
     fontSize: 15,
+    fontFamily : "Poppins-Regular"
   },
   category: {
     color: Colors.WHITE,
     fontWeight: '500',
     fontSize: 20,
+    fontFamily : "Poppins-Bold"
   },
   categoryContainer: {
     flexDirection: 'row',
@@ -399,27 +405,28 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   box: {
-    backgroundColor: '#CAD0D8',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 50,
+    resizeMode: 'contain',
+    height: 120,
+    width: 120,
     marginTop: 20,
-    borderRadius: 10,
     margin: 10,
   },
   titleText: {
     color: Colors.WHITE,
     fontSize: 16,
     paddingHorizontal: 5,
+    fontFamily : "Poppins-Regular"
   },
   boxFooterText: {
     flexDirection: 'row',
     paddingHorizontal: 5,
     alignItems: 'center',
+    fontFamily : "Poppins-Regular"
   },
   footerTextItem: {
     color: Colors.WHITE,
     fontSize: 12,
+    fontFamily : "Poppins-Regular"
   },
   list: {
     backgroundColor: '#2D3450',
@@ -430,6 +437,7 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 5,
     paddingHorizontal: 10,
+    fontFamily : "Poppins-Regular"
   },
   imageContainer: {
     borderRadius: 5,

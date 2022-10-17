@@ -182,11 +182,11 @@ const SignIn = () => {
               </View>
             </View> */}
             <View style={styles.footer}>
-              <Text style={{color: '#F1F4F8'}}>
+              <Text style={{color: '#F1F4F8' ,fontFamily : "Poppins-Regular"}}>
                 Don't have an account? {''}
               </Text>
               <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                <Text style={{color: '#9662F1'}}>Sign Up</Text>
+                <Text style={{color: '#9662F1' ,fontFamily : "Poppins-Regular"}}>Sign Up</Text>
               </TouchableOpacity>
             </View>
           </>
@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
     color: Colors.WHITE,
     fontWeight: '700',
     marginBottom: 20,
+    fontFamily : "Poppins-Bold"
   },
   form: {
     paddingHorizontal: 20,
@@ -217,16 +218,20 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 45,
     marginBottom: 20,
+    fontFamily : "Poppins-Regular"
+  
   },
   inputContainer: {
     height: 50,
     padding: 10,
     color: 'white',
+    fontFamily : "Poppins-Regular"
   },
   forgot_button: {
     height: 30,
     marginTop: 30,
     color: Colors.WHITE,
+    fontFamily : "Poppins-Regular"
   },
   signInWith: {
     fontSize: 20,

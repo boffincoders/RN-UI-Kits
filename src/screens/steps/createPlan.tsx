@@ -5,7 +5,7 @@ import AppButton from '../../components/AppButton';
 
 import auth from '@react-native-firebase/auth';
 import {Colors} from '../../constants/Colors';
-import React,{useEffect} from 'react';
+import React, {useEffect} from 'react';
 
 const CreatePlan = () => {
   useEffect(() => {
@@ -34,19 +34,38 @@ const CreatePlan = () => {
           <Text
             style={{
               color: Colors.WHITE,
+              fontFamily: 'Poppins-Bold',
               fontSize: 28,
               fontWeight: '700',
             }}>{`${fill}%`}</Text>
         )}
       </AnimatedCircularProgress>
       <View style={{marginTop: 30}}>
-        <Text style={{fontSize: 16, color: Colors.WHITE, textAlign: 'center'}}>
+        <Text
+          style={{
+            fontSize: 16,
+            color: Colors.WHITE,
+            textAlign: 'center',
+            fontFamily: 'Poppins-Regular',
+          }}>
           We create a workout according
         </Text>
-        <Text style={{fontSize: 16, color: Colors.WHITE, textAlign: 'center'}}>
+        <Text
+          style={{
+            fontSize: 16,
+            color: Colors.WHITE,
+            textAlign: 'center',
+            fontFamily: 'Poppins-Regular',
+          }}>
           to demographic profile,activity
         </Text>
-        <Text style={{fontSize: 16, color: Colors.WHITE, textAlign: 'center'}}>
+        <Text
+          style={{
+            fontSize: 16,
+            color: Colors.WHITE,
+            textAlign: 'center',
+            fontFamily: 'Poppins-Regular',
+          }}>
           level and interests
         </Text>
       </View>
@@ -70,6 +89,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '700',
     marginBottom: 10,
+    fontFamily: 'Poppins-Regular',
   },
   buttonFooter: {
     position: 'absolute',

@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -12,7 +12,7 @@ let optionText: string[] = [
 ];
 const StartTraining = () => {
   const [boxIndex, setBoxIndex] = useState<number>(0);
-  const navigation = useNavigation<ReactNavigation.RootParamList | any>()
+  const navigation = useNavigation<ReactNavigation.RootParamList | any>();
   return (
     <LinearGradient
       start={{x: 1, y: 1}}
@@ -42,7 +42,12 @@ const StartTraining = () => {
                   source={require('../assets/images/checkbox.png')}
                   style={{height: 15, width: 15}}
                 />
-                <Text style={{color: Colors.WHITE, paddingHorizontal: 5}}>
+                <Text
+                  style={{
+                    color: Colors.WHITE,
+                    paddingHorizontal: 5,
+                    fontFamily: 'Poppins-Regular',
+                  }}>
                   {text}
                 </Text>
               </View>
@@ -52,17 +57,25 @@ const StartTraining = () => {
           <View style={styles.planContainer}>
             {[1, 2].map((x, index) => {
               return (
-                <TouchableOpacity key={index} onPress={() => setBoxIndex(index)}>
+                <TouchableOpacity
+                  style={{margin: 5}}
+                  key={index}
+                  onPress={() => setBoxIndex(index)}>
                   <LinearGradient
-                  start={{x: 1, y: 1}}
-                  end={{x: 1, y: 0}}
+                    start={{x: 1, y: 1}}
+                    end={{x: 1, y: 0}}
                     style={styles.plan}
                     colors={
                       boxIndex === index
                         ? ['#332B8A', '#905DE9']
-                        : [ '#222332', '#2D3450']
+                        : ['#222332', '#2D3450']
                     }>
-                    <Text style={{color: Colors.WHITE, fontSize: 16}}>
+                    <Text
+                      style={{
+                        color: Colors.WHITE,
+                        fontSize: 16,
+                        fontFamily: 'Poppins-Regular',
+                      }}>
                       Monthly
                     </Text>
                     <Text
@@ -70,17 +83,29 @@ const StartTraining = () => {
                         color: Colors.WHITE,
                         fontSize: 20,
                         fontWeight: '800',
+
+                        fontFamily: 'Poppins-Regular',
                       }}>
                       5,99$
                     </Text>
-                    <Text style={{color: Colors.WHITE}}>per month</Text>
+                    <Text
+                      style={{
+                        color: Colors.WHITE,
+                        fontFamily: 'Poppins-Regular',
+                      }}>
+                      per month
+                    </Text>
                   </LinearGradient>
                 </TouchableOpacity>
               );
             })}
           </View>
           <View style={{marginTop: 15}}>
-            <AppButton width={"100%"} title="Continue" onPress={() =>navigation.navigate("SignIn" , {})} />
+            <AppButton
+              width={'100%'}
+              title="Continue"
+              onPress={() => navigation.navigate('SignIn', {})}
+            />
           </View>
           <Text style={styles.bottomText}>
             Eget nunc scelerisque viverra mauris in aliquam sem
@@ -120,10 +145,12 @@ const styles = StyleSheet.create({
   titleFont: {
     color: Colors.WHITE,
     fontSize: 25,
+    fontFamily: 'Poppins-Bold',
   },
   description: {
     color: Colors.WHITE,
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
   },
   footer: {
     flexDirection: 'row',
@@ -135,12 +162,20 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     marginTop: 5,
   },
-  bottomText: {marginTop: 10, fontSize: 12, color: '#F1F4F8'},
+  bottomText: {
+    marginTop: 10,
+    fontSize: 12,
+    color: '#F1F4F8',
+    fontFamily: 'Poppins-Regular',
+  },
   planContainer: {
     flexDirection: 'row',
     width: '100%',
+    // margin : 5,
     // paddingHorizontal : 30,
-    justifyContent : "space-between",
+    alignItems: 'center',
+
+    justifyContent: 'space-between',
     marginTop: 10,
   },
   plan: {

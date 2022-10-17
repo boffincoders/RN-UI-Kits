@@ -141,14 +141,14 @@ const Timer = (data: ITimerProps) => {
     });
     setExerciseData({...exerciseData.data, sets: resetData});
     handleTimeInterval();
-    // index === 0 &&
-    //   Toast.showWithGravity(
-    //     `You can stop your set time 
-    //     after half time of your exercise set.`,
-    //     Toast.LONG,
-    //     Toast.TOP,
-    //   );
-  };  
+    index === 0 &&
+      Toast.showWithGravity(
+        `You can stop your set time 
+        after half time of your exercise set.`,
+        Toast.LONG,
+        Toast.TOP,
+      );
+  };
   const handleClearInterval = (data: any, index: number) => {
     let sets: any = [];
     setExerciseData((prevState: any) => {
@@ -215,7 +215,7 @@ const Timer = (data: ITimerProps) => {
   ) => {
     if (index === clickedTime?.index && Number(counter) > Number(givenTime)) {
       if (Platform.OS === 'ios') {
-       return true
+        return true;
       } else {
         RNBeep?.PlaySysSound(RNBeep.AndroidSoundIDs.TONE_CDMA_ABBR_ALERT);
       }
@@ -265,7 +265,7 @@ const Timer = (data: ITimerProps) => {
                         : '00:00'}
                     </Text>
                     <View>
-                      <Text style={{color: 'white'}}>
+                      <Text style={{color: 'white' ,fontFamily : "Poppins-Regular"}}>
                         {`duration ${set.time}`}
                       </Text>
                     </View>
@@ -296,6 +296,7 @@ const Timer = (data: ITimerProps) => {
                             ? '#C0C0C0'
                             : '#9662F1',
                         fontSize: 20,
+                        fontFamily : "Poppins-Regular"
                       }}>
                       {set?.buttonStatus ? 'Stop' : 'Start'}
                     </Text>
@@ -339,12 +340,12 @@ const Timer = (data: ITimerProps) => {
             )}
             <View style={styles.modalFooter}>
               <TouchableOpacity onPress={onSubmitSchedule}>
-                <Text style={{fontSize: 20, color: '#f93154'}}>Yes</Text>
+                <Text style={{fontSize: 20, color: '#f93154',fontFamily : "Poppins-Regular"}}>Yes</Text>
               </TouchableOpacity>
 
-              <Text> </Text>
+              <Text>{" "}</Text>
               <TouchableOpacity onPress={() => setIsFinishModal(false)}>
-                <Text style={{fontSize: 20, color: '#9662F1'}}>No</Text>
+                <Text style={{fontSize: 20, color: '#9662F1',fontFamily : "Poppins-Regular"}}>No</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -364,6 +365,7 @@ const styles = StyleSheet.create({
   },
   contentTitle: {
     fontSize: 16,
+    fontFamily : "Poppins-Regular"
   },
   finishButton: {
     backgroundColor: '#f93154',
@@ -385,24 +387,28 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.WHITE,
     textAlign: 'center',
+    fontFamily : "Poppins-Regular"
   },
   finishButtonText: {
     color: 'white',
     textAlign: 'center',
     fontSize: 18,
     fontWeight: '600',
+    fontFamily : "Poppins-Regular"
   },
   resetButtonText: {
     color: '#9662F1',
     textAlign: 'center',
     fontSize: 18,
     fontWeight: '600',
+    fontFamily : "Poppins-Regular"
   },
   exeName: {
     fontSize: 20,
     color: Colors.WHITE,
     textAlign: 'center',
     fontWeight: '500',
+    fontFamily : "Poppins-Regular"
   },
   list: {
     backgroundColor: '#2D3450',
@@ -414,17 +420,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
   },
-  restCircle: {
-    borderColor: '#9662F1',
-    borderWidth: 1.5,
-    borderRadius: Math.round(
-      Dimensions.get('window').width + Dimensions.get('window').height,
-    ),
-    width: Dimensions.get('window').width * 0.1,
-    height: Dimensions.get('window').width * 0.1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  
 
   buttonContainer: {
     flexDirection: 'row',

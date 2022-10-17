@@ -13,7 +13,6 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors} from '../../constants/Colors';
 import {storeData} from '../../storage';
-import {IUserType} from '.';
 import { IPropsUserInfo } from './Home';
 const Profile = (props: IPropsUserInfo) => {
   const navigation = useNavigation<ReactNavigation.RootParamList | any>();
@@ -78,7 +77,7 @@ const Profile = (props: IPropsUserInfo) => {
             colors={['#332B8A', '#905DE9']}
             style={styles.profileItems}>
             <Image source={require('../../assets/images/weight.png')} />
-            <Text style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
+            <Text style={{color: Colors.WHITE, fontSize: 14, marginTop: 8 , fontFamily : "Poppins-Regular"}}>
               55 Kg
             </Text>
           </LinearGradient>
@@ -88,18 +87,17 @@ const Profile = (props: IPropsUserInfo) => {
             colors={['#332B8A', '#905DE9']}
             style={styles.profileItems}>
             <Image source={require('../../assets/images/height.png')} />
-            <Text style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
+            <Text style={{color: Colors.WHITE, fontSize: 14, marginTop: 8 ,fontFamily : "Poppins-Regular"}}>
               167 cm
             </Text>
           </LinearGradient>
-
           <LinearGradient
             start={{x: 1, y: 1}}
             end={{x: 1, y: 0}}
             colors={['#332B8A', '#905DE9']}
             style={styles.profileItems}>
             <Image source={require('../../assets/images/cake.png')} />
-            <Text style={{color: Colors.WHITE, fontSize: 14, marginTop: 8}}>
+            <Text style={{color: Colors.WHITE, fontSize: 14, marginTop: 8 ,fontFamily : "Poppins-Regular"}}>
               26 Years
             </Text>
           </LinearGradient>
@@ -157,6 +155,7 @@ const Profile = (props: IPropsUserInfo) => {
               color: Colors.WHITE,
               paddingHorizontal: 10,
               paddingVertical: 13,
+              fontFamily : "Poppins-Regular"
             }}>
             Settings
           </Text>
@@ -241,6 +240,7 @@ const styles = StyleSheet.create({
     fontSize: 27,
     color: Colors.WHITE,
     fontWeight: '500',
+    fontFamily : "Poppins-bold"
   },
   header: {
     flexDirection: 'row',
@@ -277,6 +277,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     alignItems: 'center',
     marginLeft: 3,
+    fontFamily : "Poppins-Regular"
   },
   circleImage: {
     backgroundColor: '#D8D8D8',
@@ -293,6 +294,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingVertical: 10,
     fontWeight: '500',
+    fontFamily : "Poppins-Regular"
   },
   profileItemsContainer: {
     width: '100%',
@@ -307,6 +309,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     padding: 10,
+    fontFamily : "Poppins-Regular"
   },
   listItem: {
     flexDirection: 'row',
@@ -314,8 +317,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 10,
     margin: 5,
+    fontFamily : "Poppins-Regular"
   },
-  listTitle: {fontSize: 16, color: Colors.WHITE},
+  listTitle: {fontSize: 16, color: Colors.WHITE , fontFamily : "Poppins-Regular"},
   borderListBottom: {borderBottomColor: '#FFFFFF', borderBottomWidth: 0.5},
 });
 export default Profile;

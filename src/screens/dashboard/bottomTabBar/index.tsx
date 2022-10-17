@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
   labelText: {
     alignItems: 'center',
     marginTop: 6,
+    fontFamily : "Poppins-Bold"
   },
 });
 

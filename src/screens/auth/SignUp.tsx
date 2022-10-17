@@ -276,9 +276,9 @@ const SignUp = () => {
       </Formik>
 
       <View style={styles.footer}>
-        <Text style={{color: '#F1F4F8'}}>Don't have an account? {''}</Text>
+        <Text style={{color: '#F1F4F8' ,fontFamily : "Poppins-Regular"}}>Don't have an account? {''}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-          <Text style={{color: '#9662F1'}}>Sign In</Text>
+          <Text style={{color: '#9662F1' , fontFamily : "Poppins-Regular"}}>Sign In</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -296,6 +296,7 @@ const styles = StyleSheet.create({
     color: Colors.WHITE,
     fontWeight: '700',
     marginBottom: 20,
+    fontFamily : "Poppins-Bold"
   },
   form: {
     paddingHorizontal: 20,
@@ -311,11 +312,13 @@ const styles = StyleSheet.create({
     height: 50,
     padding: 15,
     color: 'white',
+    fontFamily : "Poppins-Regular"
   },
   forgot_button: {
     height: 30,
     marginTop: 30,
     color: Colors.WHITE,
+    fontFamily : "Poppins-Regular"
   },
   signInWith: {
     fontSize: 20,
@@ -343,6 +346,7 @@ const styles = StyleSheet.create({
     color: '#CAD0D8',
     fontSize: 12,
     marginLeft: 6,
+    fontFamily : "Poppins-Regular"
   },
   acceptContainer: {
     flexDirection: 'row',

@@ -91,6 +91,7 @@ const Step2 = ({onInputChanges}: IPropsSteps) => {
                           color: Colors.WHITE,
                           marginLeft: 5,
                           fontSize: 16,
+                          fontFamily : "Poppins-Regular"
                         }}>
                         {x.name}
                       </Text>
@@ -120,6 +121,7 @@ const styles = StyleSheet.create({
   step: {
     color: '#9662F1',
     fontSize: 16,
+    fontFamily : "Poppins-Regular"
   },
   gender: {
     fontSize: 27,
@@ -127,6 +129,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '700',
     marginBottom: 10,
+    fontFamily : "Poppins-Regular"
   },
   listContainer: {
     marginTop: 60,
